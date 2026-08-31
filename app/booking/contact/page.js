@@ -60,7 +60,10 @@ export default function BookingContactPage() {
               label="Full name"
               placeholder="John Smith"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
+              }}
               error={errors.name}
               required
             />
@@ -69,7 +72,14 @@ export default function BookingContactPage() {
               type="tel"
               placeholder="04XX XXX XXX"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setPhone(value);
+                setErrors((prev) => ({
+                  ...prev,
+                  phone: value.trim() ? "" : prev.phone && "Phone number is required.",
+                }));
+              }}
               error={errors.phone}
               required
             />

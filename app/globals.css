@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+:root {
+  /* Neutrals */
+  --canvas: #F6F7F9;
+  --surface: #FFFFFF;
+  --ink: #101828;
+  --ink-muted: #475467;
+  --ink-faint: #98A2B3;
+  --border: #E4E7EC;
+  --border-strong: #D0D5DD;
+
+  /* Brand — steel teal */
+  --brand-50:  #EEF7F9;
+  --brand-100: #D3ECF1;
+  --brand-200: #A9DBE4;
+  --brand-300: #78C3D2;
+  --brand-500: #167F95;
+  --brand-600: #0B6E82;
+  --brand-700: #0A5A6A;
+  --brand-800: #0A4550;
+  --brand-900: #08333B;
+
+  /* Accent — warm amber */
+  --accent-50:  #FEF6E9;
+  --accent-100: #FCE9C6;
+  --accent-200: #F9D48E;
+  --accent-300: #F6BE5F;
+  --accent-400: #F4B84A;
+  --accent-500: #F2A93B;
+  --accent-600: #DB8E1F;
+
+  /* Feedback */
+  --success: #1FAE72;
+  --danger: #E5484D;
+  --danger-strong: #B3261E;
+
+  /* Radius scale */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+@theme inline {
+  --font-display: "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+
+  --color-accent-50: var(--accent-50);
+  --color-accent-100: var(--accent-100);
+  --color-accent-200: var(--accent-200);
+  --color-accent-300: var(--accent-300);
+  --color-accent-400: var(--accent-400);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-danger-strong: var(--danger-strong);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+}
+
+body {
+  background-color: var(--canvas);
+  background-image:
+    radial-gradient(var(--brand-200) 1px, transparent 1px),
+    radial-gradient(circle at 12% 8%, rgba(120, 195, 210, 0.16), transparent 42%),
+    radial-gradient(circle at 88% 22%, rgba(246, 190, 95, 0.14), transparent 42%),
+    radial-gradient(circle at 20% 78%, rgba(120, 195, 210, 0.13), transparent 42%),
+    radial-gradient(circle at 92% 85%, rgba(246, 190, 95, 0.12), transparent 42%);
+  background-size: 22px 22px, auto, auto, auto, auto;
+  background-attachment: fixed;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

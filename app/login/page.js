@@ -5,7 +5,6 @@ import { Mail, MailCheck } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { PageBackground } from "@/components/layout/PageBackground";
-import { Reveal } from "@/components/animation/Reveal";
 import { validateEmail } from "@/lib/validators";
 
 export default function LoginPage() {
@@ -33,7 +32,7 @@ export default function LoginPage() {
     <section className="relative flex min-h-[calc(100vh-64px)] items-center justify-center overflow-hidden px-6 py-16 bg-brand-50/50">
       <PageBackground />
 
-      <Reveal className="w-full max-w-md rounded-[--radius-lg] border border-border bg-surface p-8 text-center shadow-lg sm:p-10">
+      <div className="animate-fade-up w-full max-w-md rounded-[--radius-lg] border-2 border-brand-100 bg-surface p-8 text-center shadow-lg sm:p-10">
         {!sent ? (
           <>
             <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-brand-50">
@@ -80,7 +79,7 @@ export default function LoginPage() {
             </button>
           </>
         )}
-      </Reveal>
+      </div>
     </section>
   );
 }

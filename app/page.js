@@ -73,18 +73,6 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="relative border-y border-border bg-brand-50/70">
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          <Reveal as="div" className="mx-auto max-w-xl text-center">
-            <span className="text-xs font-semibold uppercase tracking-wide text-brand-600">Our Services</span>
-            <h2 className="mt-2 font-display text-3xl font-bold text-ink">Whatever the job, we&apos;ve got you covered</h2>
-            <p className="mt-3 text-sm text-ink-muted">
-              Choose a service below and tell us what you need - pricing and availability shown before you confirm.
-            </p>
-          </Reveal>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
             {SERVICES.map(({ id, title, description, image }, i) => (

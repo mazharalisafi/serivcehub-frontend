@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { BookingSteps } from "@/components/booking/BookingSteps";
-import { Reveal } from "@/components/animation/Reveal";
 import { cn } from "@/lib/utils";
 import { SERVICES, TIME_SLOTS } from "@/lib/serviceQuestions";
 import { BOOKINGS } from "@/lib/mockData";
@@ -42,6 +41,8 @@ export default function BookingDateTimePage() {
     if (!date) return false;
     return BOOKINGS.some((b) => b.service === service.label && b.date === date && b.time === slot);
   }
+
+  const isDateFullyBooked = date && TIME_SLOTS.every((slot) => isSlotTaken(slot));
 
   function handleSlotClick(slot) {
     if (isSlotTaken(slot)) {
@@ -83,7 +84,7 @@ export default function BookingDateTimePage() {
       <div className="mx-auto max-w-3xl px-6 py-16">
         <BookingSteps current={4} />
 
-        <Reveal className="rounded-[--radius-lg] border border-border bg-surface p-6 shadow-sm sm:p-8">
+        <div className="animate-fade-up rounded-[--radius-lg] border-2 border-brand-100 bg-surface p-6 shadow-sm transition-colors hover:border-brand-200 sm:p-8">
           <div className="flex items-center gap-2">
             <CalendarDays className="size-4 text-brand-600" />
             <h2 className="font-display text-lg font-semibold text-ink">Pick a date & time</h2>
@@ -101,6 +102,14 @@ export default function BookingDateTimePage() {
               </p>
               {!date ? (
                 <p className="mt-2 text-xs text-ink-faint">Choose a date first to see available times.</p>
+              ) : isDateFullyBooked ? (
+                <div className="mt-2 flex items-start gap-2 rounded-[--radius-sm] bg-danger/10 p-3 text-xs text-danger-strong">
+                  <X className="mt-0.5 size-3.5 shrink-0" />
+                  <span>
+                    We&apos;re fully booked for {service.label} on this date. Please choose a
+                    different date.
+                  </span>
+                </div>
               ) : (
                 <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5">
                   {TIME_SLOTS.map((slot) => {
@@ -146,7 +155,7 @@ export default function BookingDateTimePage() {
               Continue <ArrowRight className="size-4" />
             </Button>
           </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

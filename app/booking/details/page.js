@@ -8,9 +8,10 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { BookingSteps } from "@/components/booking/BookingSteps";
-import { Reveal } from "@/components/animation/Reveal";
 import { SERVICES, SERVICE_QUESTIONS } from "@/lib/serviceQuestions";
 import { getDraft, saveDraft } from "@/lib/bookingDraft";
+
+const NOTES_MAX = 500;
 
 export default function BookingDetailsPage() {
   const router = useRouter();
@@ -44,6 +45,10 @@ export default function BookingDetailsPage() {
       setError("Notes should be at least 10 characters, or left empty.");
       return;
     }
+    if (jobDetails.length > NOTES_MAX) {
+      setError(`Notes can't be longer than ${NOTES_MAX} characters.`);
+      return;
+    }
     saveDraft({ answers, jobDetails });
     router.push("/booking/location");
   }
@@ -55,7 +60,7 @@ export default function BookingDetailsPage() {
       <div className="mx-auto max-w-3xl px-6 py-16">
         <BookingSteps current={2} />
 
-        <Reveal className="rounded-[--radius-lg] border border-border bg-surface p-6 shadow-sm sm:p-8">
+        <div className="animate-fade-up rounded-[--radius-lg] border-2 border-brand-100 bg-surface p-6 shadow-sm transition-colors hover:border-brand-200 sm:p-8">
           <h2 className="font-display text-lg font-semibold text-ink">
             Tell us about the {service.label.toLowerCase()} service you need
           </h2>
@@ -81,8 +86,9 @@ export default function BookingDetailsPage() {
             <Textarea
               label="Anything else we should know? (optional)"
               placeholder="Example: Kitchen tap is leaking, needs a look this week."
-              hint={error ? undefined : "Min 10 characters if you add a note"}
+              hint={error ? undefined : `${jobDetails.length}/${NOTES_MAX} - min 10 characters if you add a note`}
               error={error}
+              maxLength={NOTES_MAX}
               value={jobDetails}
               onChange={(e) => {
                 setJobDetails(e.target.value);
@@ -99,7 +105,7 @@ export default function BookingDetailsPage() {
               Continue <ArrowRight className="size-4" />
             </Button>
           </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

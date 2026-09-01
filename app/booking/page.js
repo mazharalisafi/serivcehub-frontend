@@ -6,7 +6,6 @@ import { Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { BookingSteps } from "@/components/booking/BookingSteps";
-import { Reveal } from "@/components/animation/Reveal";
 import { cn } from "@/lib/utils";
 import { SERVICES } from "@/lib/serviceQuestions";
 import { saveDraft } from "@/lib/bookingDraft";
@@ -57,13 +56,13 @@ function BookingPageInner() {
           {SERVICES.map((s, i) => {
             const isSelected = selected === s.id;
             return (
-              <Reveal key={s.id} delay={i * 100}>
+              <div key={s.id} className="animate-fade-up" style={{ animationDelay: `${i * 80}ms` }}>
                 <button
                   type="button"
                   onClick={() => setSelected(s.id)}
                   className={cn(
                     "group relative w-full overflow-hidden rounded-[--radius-lg] border-2 bg-surface text-left shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg",
-                    isSelected ? "border-brand-600 shadow-md" : "border-border"
+                    isSelected ? "border-brand-600 shadow-md" : "border-brand-100 hover:border-brand-300"
                   )}
                 >
                   {isSelected && (
@@ -81,7 +80,7 @@ function BookingPageInner() {
                     <p className="text-xs text-ink-muted">{s.price}</p>
                   </div>
                 </button>
-              </Reveal>
+              </div>
             );
           })}
         </div>

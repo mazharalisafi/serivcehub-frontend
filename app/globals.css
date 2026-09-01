@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 :root {
-  /* Neutrals */
   --canvas: #F6F7F9;
   --surface: #FFFFFF;
   --ink: #101828;
@@ -10,7 +9,6 @@
   --border: #E4E7EC;
   --border-strong: #D0D5DD;
 
-  /* Brand — steel teal */
   --brand-50:  #EEF7F9;
   --brand-100: #D3ECF1;
   --brand-200: #A9DBE4;
@@ -21,7 +19,6 @@
   --brand-800: #0A4550;
   --brand-900: #08333B;
 
-  /* Accent — warm amber */
   --accent-50:  #FEF6E9;
   --accent-100: #FCE9C6;
   --accent-200: #F9D48E;
@@ -30,15 +27,13 @@
   --accent-500: #F2A93B;
   --accent-600: #DB8E1F;
 
-  /* Feedback */
   --success: #1FAE72;
   --danger: #E5484D;
   --danger-strong: #B3261E;
 
-  /* Radius scale */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
 }
 
 @theme inline {
@@ -104,4 +99,19 @@ h1, h2, h3, h4 {
   outline: 2px solid var(--brand-500);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.35s ease-out both;
 }

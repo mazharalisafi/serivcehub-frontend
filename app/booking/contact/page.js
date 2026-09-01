@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { BookingSteps } from "@/components/booking/BookingSteps";
-import { Reveal } from "@/components/animation/Reveal";
 import { getDraft, saveDraft } from "@/lib/bookingDraft";
 import { validatePhone, validateRequired } from "@/lib/validators";
 
@@ -41,7 +40,7 @@ export default function BookingContactPage() {
     if (newErrors.name || newErrors.phone) return;
 
     saveDraft({ name, contactMethod: "phone", phone });
-    router.push("/booking/confirmation");
+    router.push("/booking/review");
   }
 
   return (
@@ -51,7 +50,7 @@ export default function BookingContactPage() {
       <div className="mx-auto max-w-3xl px-6 py-16">
         <BookingSteps current={5} />
 
-        <Reveal className="rounded-[--radius-lg] border border-border bg-surface p-6 shadow-sm sm:p-8">
+        <div className="animate-fade-up rounded-[--radius-lg] border-2 border-brand-100 bg-surface p-6 shadow-sm transition-colors hover:border-brand-200 sm:p-8">
           <h3 className="font-display text-lg font-semibold text-ink">Your contact details</h3>
           <p className="mt-1 text-sm text-ink-muted">We&apos;ll call or text this number to confirm your booking.</p>
 
@@ -93,7 +92,7 @@ export default function BookingContactPage() {
               </Button>
             </div>
           </form>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

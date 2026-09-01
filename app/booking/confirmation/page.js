@@ -19,7 +19,7 @@ export default function BookingConfirmationPage() {
     hasLoaded.current = true;
 
     const d = getDraft();
-    if (!d.service || !d.date || !d.phone) {
+    if (!d.service || !d.date || !d.phone || !d.reference) {
       router.replace("/booking");
       return;
     }
@@ -35,14 +35,20 @@ export default function BookingConfirmationPage() {
     <section className="relative flex min-h-[calc(100vh-64px)] items-center justify-center overflow-hidden px-6 py-16 bg-brand-50/50">
       <PageBackground />
 
-      <div className="flex w-full max-w-md flex-col items-center gap-3 rounded-[--radius-lg] border border-brand-100 bg-brand-50 p-10 text-center">
+      <div className="flex w-full max-w-md flex-col items-center gap-3 rounded-[--radius-lg] border-2 border-brand-100 bg-brand-50 p-10 text-center">
         <div className="flex size-14 items-center justify-center rounded-full bg-brand-600">
           <PartyPopper className="size-6 text-white" />
         </div>
         <h1 className="font-display text-xl font-bold text-ink">Booking request sent!</h1>
+
+        <div className="rounded-[--radius-md] border border-brand-200 bg-surface px-4 py-2">
+          <p className="text-xs text-ink-muted">Booking reference</p>
+          <p className="font-display text-lg font-bold text-brand-700">{draft.reference}</p>
+        </div>
+
         <p className="max-w-sm text-sm text-ink-muted">
           We&apos;ve received your {service?.label.toLowerCase()} booking for {draft.date} at {draft.time}.
-          A confirmation will be sent via SMS shortly.
+          A confirmation will be sent via SMS shortly - save your reference number above.
         </p>
         <Link href="/" className="mt-2">
           <Button>Back to Home</Button>

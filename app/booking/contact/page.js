@@ -7,14 +7,17 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { BookingSteps } from "@/components/booking/BookingSteps";
+import { cn } from "@/lib/utils";
 import { getDraft, saveDraft } from "@/lib/bookingDraft";
-import { validatePhone, validateRequired } from "@/lib/validators";
+import { validateEmail, validatePhone, validateRequired } from "@/lib/validators";
 
 export default function BookingContactPage() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [preferredContact, setPreferredContact] = useState("phone");
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -25,6 +28,8 @@ export default function BookingContactPage() {
     }
     setName(draft.name || "");
     setPhone(draft.phone || "");
+    setEmail(draft.email || "");
+    setPreferredContact(draft.preferredContact || "phone");
     setReady(true);
   }, [router]);
 
@@ -35,11 +40,12 @@ export default function BookingContactPage() {
     const newErrors = {
       name: validateRequired(name, "Full name"),
       phone: validatePhone(phone),
+      email: validateEmail(email),
     };
     setErrors(newErrors);
-    if (newErrors.name || newErrors.phone) return;
+    if (newErrors.name || newErrors.phone || newErrors.email) return;
 
-    saveDraft({ name, contactMethod: "phone", phone });
+    saveDraft({ name, phone, email, preferredContact });
     router.push("/booking/review");
   }
 
@@ -52,7 +58,9 @@ export default function BookingContactPage() {
 
         <div className="animate-fade-up rounded-[--radius-lg] border-2 border-brand-100 bg-surface p-6 shadow-sm transition-colors hover:border-brand-200 sm:p-8">
           <h3 className="font-display text-lg font-semibold text-ink">Your contact details</h3>
-          <p className="mt-1 text-sm text-ink-muted">We&apos;ll call or text this number to confirm your booking.</p>
+          <p className="mt-1 text-sm text-ink-muted">
+            We&apos;ll use these to keep you updated on your booking.
+          </p>
 
           <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
             <Input
@@ -82,13 +90,50 @@ export default function BookingContactPage() {
               error={errors.phone}
               required
             />
+            <Input
+              label="Email address"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => {
+                const value = e.target.value;
+                setEmail(value);
+                setErrors((prev) => ({
+                  ...prev,
+                  email: value.trim() ? "" : prev.email && "Email is required.",
+                }));
+              }}
+              error={errors.email}
+              required
+            />
+
+            <div>
+              <p className="text-sm font-medium text-ink">Preferred contact method</p>
+              <div className="mt-2 flex gap-2">
+                {["phone", "email"].map((method) => (
+                  <button
+                    key={method}
+                    type="button"
+                    onClick={() => setPreferredContact(method)}
+                    className={cn(
+                      "flex-1 rounded-[--radius-md] border px-4 py-2 text-sm font-semibold capitalize transition-colors",
+                      preferredContact === method
+                        ? "border-brand-600 bg-brand-50 text-brand-700"
+                        : "border-border-strong text-ink-muted hover:text-ink"
+                    )}
+                  >
+                    {method}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <div className="mt-2 flex items-center justify-between">
               <Button type="button" variant="outline" onClick={() => router.push("/booking/datetime")}>
                 <ArrowLeft className="size-4" /> Back
               </Button>
               <Button type="submit">
-                Confirm Booking <ArrowRight className="size-4" />
+                Continue to Review <ArrowRight className="size-4" />
               </Button>
             </div>
           </form>

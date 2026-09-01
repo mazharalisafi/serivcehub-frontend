@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle2, Wrench, MapPin, CalendarDays, User } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Wrench, MapPin, CalendarDays, User, Pencil, Tag } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { BookingSteps } from "@/components/booking/BookingSteps";
@@ -19,6 +19,23 @@ function SummaryRow({ label, value }) {
     <div className="flex items-start justify-between gap-4 py-2 text-sm">
       <span className="text-ink-muted">{label}</span>
       <span className="text-right font-medium text-ink">{value}</span>
+    </div>
+  );
+}
+
+function SectionHeader({ icon: Icon, title, onEdit }) {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2 text-sm font-semibold text-brand-700">
+        <Icon className="size-4" /> {title}
+      </div>
+      <button
+        type="button"
+        onClick={onEdit}
+        className="flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700"
+      >
+        <Pencil className="size-3" /> Edit
+      </button>
     </div>
   );
 }
@@ -66,9 +83,7 @@ export default function BookingReviewPage() {
           </p>
 
           <div className="mt-6 rounded-[--radius-md] border border-border p-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-brand-700">
-              <Wrench className="size-4" /> {service.label}
-            </div>
+            <SectionHeader icon={Wrench} title={service.label} onEdit={() => router.push("/booking")} />
             <div className="mt-2 divide-y divide-border">
               {questions.map((q) => (
                 <SummaryRow key={q.id} label={q.label} value={draft.answers?.[q.id] || "-"} />
@@ -77,10 +92,18 @@ export default function BookingReviewPage() {
             </div>
           </div>
 
-          <div className="mt-4 rounded-[--radius-md] border border-border p-4">
+          <div className="mt-4 rounded-[--radius-md] border border-brand-200 bg-brand-50 p-4">
             <div className="flex items-center gap-2 text-sm font-semibold text-brand-700">
-              <MapPin className="size-4" /> Location
+              <Tag className="size-4" /> Estimated Price
             </div>
+            <p className="mt-1 text-lg font-bold text-ink">{service.price}</p>
+            <p className="mt-0.5 text-xs text-ink-muted">
+              Final price may vary depending on the scope of the job, confirmed at the time of service.
+            </p>
+          </div>
+
+          <div className="mt-4 rounded-[--radius-md] border border-border p-4">
+            <SectionHeader icon={MapPin} title="Location" onEdit={() => router.push("/booking/location")} />
             <div className="mt-2 divide-y divide-border">
               <SummaryRow label="State" value={draft.state} />
               <SummaryRow label="Address" value={draft.address} />
@@ -88,9 +111,7 @@ export default function BookingReviewPage() {
           </div>
 
           <div className="mt-4 rounded-[--radius-md] border border-border p-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-brand-700">
-              <CalendarDays className="size-4" /> Date & Time
-            </div>
+            <SectionHeader icon={CalendarDays} title="Date & Time" onEdit={() => router.push("/booking/datetime")} />
             <div className="mt-2 divide-y divide-border">
               <SummaryRow label="Date" value={draft.date} />
               <SummaryRow label="Time" value={draft.time} />
@@ -98,12 +119,12 @@ export default function BookingReviewPage() {
           </div>
 
           <div className="mt-4 rounded-[--radius-md] border border-border p-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-brand-700">
-              <User className="size-4" /> Contact
-            </div>
+            <SectionHeader icon={User} title="Contact" onEdit={() => router.push("/booking/contact")} />
             <div className="mt-2 divide-y divide-border">
               <SummaryRow label="Name" value={draft.name} />
               <SummaryRow label="Phone" value={draft.phone} />
+              <SummaryRow label="Email" value={draft.email} />
+              <SummaryRow label="Preferred contact" value={draft.contactMethod === "email" ? "Email" : "Phone"} />
             </div>
           </div>
 

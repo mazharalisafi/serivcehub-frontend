@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -13,12 +14,35 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // Next.js <Link> only triggers a navigation (and the resulting scroll reset)
+  // when the target route differs from the current one. If you're already on
+  // "/" and scrolled down, clicking "Home" does nothing because Next.js sees
+  // no route change. This handler catches that case and scrolls to top manually.
+  const handleNavClick = (href) => (e) => {
+    setOpen(false);
+    if (href === "/" && pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (href === "/") {
+      // Navigating to home from another page: let Link push the route,
+      // then make sure we land at the top once it's mounted.
+      router.push(href);
+      // In case the target page renders already scrolled (e.g. anchor
+      // restoration), force it to the top after navigation settles.
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "instant" }));
+      e.preventDefault();
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-surface/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between pl-4 pr-6 sm:pl-6">
         <Link
           href="/"
+          onClick={handleNavClick("/")}
           className="rounded-[--radius-md] border border-brand-100 bg-brand-50 px-3 py-1.5 font-display text-lg font-bold text-ink"
         >
           Service<span className="text-brand-600">Hub</span>
@@ -29,6 +53,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
+              onClick={handleNavClick(link.href)}
               className="rounded-full px-4 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-brand-50 hover:text-brand-700"
             >
               {link.label}
@@ -62,7 +87,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setOpen(false)}
+                onClick={handleNavClick(link.href)}
                 className="rounded-[--radius-md] px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-brand-50 hover:text-brand-700"
               >
                 {link.label}

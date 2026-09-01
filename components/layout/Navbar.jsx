@@ -42,8 +42,12 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between pl-4 pr-6 sm:pl-6">
         <Link
           href="/"
+<<<<<<< HEAD
           onClick={handleNavClick("/")}
           className="rounded-[--radius-md] border border-brand-100 bg-brand-50 px-3 py-1.5 font-display text-lg font-bold text-ink"
+=======
+          className="rounded-full border border-brand-100 bg-brand-50 px-4 py-1.5 font-display text-lg font-bold text-ink"
+>>>>>>> 28ba8d7cf5462888b994a49e9b8662a4c0ac87c9
         >
           Service<span className="text-brand-600">Hub</span>
         </Link>

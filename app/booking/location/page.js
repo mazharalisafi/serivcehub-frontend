@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { BookingSteps } from "@/components/booking/BookingSteps";
-import { Reveal } from "@/components/animation/Reveal";
 import { AU_STATES } from "@/lib/serviceQuestions";
 import { getDraft, saveDraft } from "@/lib/bookingDraft";
 
@@ -48,7 +47,7 @@ export default function BookingLocationPage() {
       <div className="mx-auto max-w-3xl px-6 py-16">
         <BookingSteps current={3} />
 
-        <Reveal className="rounded-[--radius-lg] border border-border bg-surface p-6 shadow-sm sm:p-8">
+        <div className="animate-fade-up rounded-[--radius-lg] border-2 border-brand-100 bg-surface p-6 shadow-sm transition-colors hover:border-brand-200 sm:p-8">
           <div className="flex items-center gap-2">
             <MapPin className="size-4 text-brand-600" />
             <h2 className="font-display text-lg font-semibold text-ink">Where do you need us?</h2>
@@ -92,7 +91,7 @@ export default function BookingLocationPage() {
               Continue <ArrowRight className="size-4" />
             </Button>
           </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

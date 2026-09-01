@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Reveal } from "@/components/animation/Reveal";
-import { validateEmail, validateRequired } from "@/lib/validators";
+import { validateEmail, validateRequired, validateMinLength } from "@/lib/validators";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -20,7 +19,7 @@ export default function AdminLoginPage() {
     e.preventDefault();
     const newErrors = {
       email: validateEmail(email),
-      password: validateRequired(password, "Password"),
+      password: validateRequired(password, "Password") || validateMinLength(password, 6, "Password"),
     };
     setErrors(newErrors);
     if (newErrors.email || newErrors.password) return;
@@ -36,7 +35,7 @@ export default function AdminLoginPage() {
       <div className="pointer-events-none absolute -left-20 top-16 -z-10 size-72 rounded-full bg-brand-600/20 blur-3xl" />
       <div className="pointer-events-none absolute -right-16 bottom-10 -z-10 size-64 rounded-full bg-accent-500/10 blur-3xl" />
 
-      <Reveal className="w-full max-w-md rounded-[--radius-lg] border border-white/10 bg-surface p-8 text-center shadow-lg sm:p-10">
+      <div className="animate-fade-up w-full max-w-md rounded-[--radius-lg] border-2 border-white/10 bg-surface p-8 text-center shadow-lg sm:p-10">
         <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-ink">
           <ShieldCheck className="size-5 text-accent-400" />
         </div>
@@ -44,6 +43,12 @@ export default function AdminLoginPage() {
         <p className="mt-2 text-sm text-ink-muted">
           Sign in with your work email and password to manage bookings.
         </p>
+
+        <div className="mt-4 rounded-[--radius-md] border border-accent-200 bg-accent-50 px-3 py-2 text-left text-xs text-ink-muted">
+          <span className="font-semibold text-ink">Demo mode:</span> there&apos;s no backend yet,
+          so any valid-looking email and any password (6+ characters) will sign you in.
+          Real staff accounts will be added once the backend is built.
+        </div>
 
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4 text-left">
           <Input
@@ -104,7 +109,7 @@ export default function AdminLoginPage() {
           </a>
           .
         </p>
-      </Reveal>
+      </div>
     </section>
   );
 }

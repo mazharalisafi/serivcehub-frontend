@@ -14,6 +14,7 @@ import { getDraft, saveDraft } from "@/lib/bookingDraft";
 
 // Suffix used to store the free-text answer for a question when "Other" is picked.
 const OTHER_SUFFIX = "Other";
+const NOTES_MAX = 500;
 
 export default function BookingDetailsPage() {
   const router = useRouter();
@@ -56,6 +57,10 @@ export default function BookingDetailsPage() {
     }
     if (jobDetails.trim().length > 0 && jobDetails.trim().length < 10) {
       setError("Notes should be at least 10 characters, or left empty.");
+      return;
+    }
+    if (jobDetails.length > NOTES_MAX) {
+      setError(`Notes can't be longer than ${NOTES_MAX} characters.`);
       return;
     }
     saveDraft({ answers, jobDetails });
@@ -122,8 +127,9 @@ export default function BookingDetailsPage() {
             <Textarea
               label="Anything else we should know? (optional)"
               placeholder="Example: Kitchen tap is leaking, needs a look this week."
-              hint={error ? undefined : "Min 10 characters if you add a note"}
+              hint={error ? undefined : `${jobDetails.length}/${NOTES_MAX} - min 10 characters if you add a note`}
               error={error}
+              maxLength={NOTES_MAX}
               value={jobDetails}
               onChange={(e) => {
                 setJobDetails(e.target.value);

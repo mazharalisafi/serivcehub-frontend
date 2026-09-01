@@ -12,7 +12,7 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-6 py-14">
         <div className="grid gap-10 sm:grid-cols-3">
           <div>
-            <p className="inline-block rounded-[--radius-md] border border-white/15 bg-white/5 px-3 py-1.5 font-display text-lg font-semibold text-white">
+            <p className="inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1.5 font-display text-lg font-semibold text-white">
               Service<span className="text-accent-400">Hub</span>
             </p>
             <p className="mt-3 max-w-xs text-sm text-white/60">

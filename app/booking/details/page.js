@@ -8,9 +8,12 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { PageBackground } from "@/components/layout/PageBackground";
 import { BookingSteps } from "@/components/booking/BookingSteps";
+import { Reveal } from "@/components/animation/Reveal";
 import { SERVICES, SERVICE_QUESTIONS } from "@/lib/serviceQuestions";
 import { getDraft, saveDraft } from "@/lib/bookingDraft";
 
+// Suffix used to store the free-text answer for a question when "Other" is picked.
+const OTHER_SUFFIX = "Other";
 const NOTES_MAX = 500;
 
 export default function BookingDetailsPage() {
@@ -36,9 +39,20 @@ export default function BookingDetailsPage() {
 
   const questions = SERVICE_QUESTIONS[service.id] || [];
 
+  function isOtherSelected(questionId) {
+    return answers[questionId] === "Other";
+  }
+
   function handleContinue() {
     if (questions.some((q) => !answers[q.id])) {
       setError("Please answer all questions above before continuing.");
+      return;
+    }
+    const missingOtherDetail = questions.some(
+      (q) => isOtherSelected(q.id) && !answers[`${q.id}${OTHER_SUFFIX}`]?.trim()
+    );
+    if (missingOtherDetail) {
+      setError('Please describe your issue in the field below "Other".');
       return;
     }
     if (jobDetails.trim().length > 0 && jobDetails.trim().length < 10) {
@@ -60,7 +74,7 @@ export default function BookingDetailsPage() {
       <div className="mx-auto max-w-3xl px-6 py-16">
         <BookingSteps current={2} />
 
-        <div className="animate-fade-up rounded-[--radius-lg] border-2 border-brand-100 bg-surface p-6 shadow-sm transition-colors hover:border-brand-200 sm:p-8">
+        <Reveal className="rounded-[--radius-lg] border border-border bg-surface p-6 shadow-sm sm:p-8">
           <h2 className="font-display text-lg font-semibold text-ink">
             Tell us about the {service.label.toLowerCase()} service you need
           </h2>
@@ -70,18 +84,45 @@ export default function BookingDetailsPage() {
 
           <div className="mt-6 flex flex-col gap-4">
             {questions.map((q) => (
-              <Select
-                key={q.id}
-                label={q.label}
-                placeholder="Select an option"
-                value={answers[q.id] || ""}
-                onChange={(e) => {
-                  setAnswers((prev) => ({ ...prev, [q.id]: e.target.value }));
-                  if (error) setError("");
-                }}
-                options={q.options.map((opt) => ({ value: opt, label: opt }))}
-                required
-              />
+              <div key={q.id} className="flex flex-col gap-4">
+                <Select
+                  label={q.label}
+                  placeholder="Select an option"
+                  value={answers[q.id] || ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setAnswers((prev) => {
+                      const next = { ...prev, [q.id]: value };
+                      // Clear any leftover "Other" description if the user
+                      // switches away from the "Other" option.
+                      if (value !== "Other") delete next[`${q.id}${OTHER_SUFFIX}`];
+                      return next;
+                    });
+                    if (error) setError("");
+                  }}
+                  options={q.options.map((opt) => ({ value: opt, label: opt }))}
+                  required
+                />
+
+                {isOtherSelected(q.id) && (
+                  <Textarea
+                    label={`Please describe your ${q.label
+                      .toLowerCase()
+                      .replace(/^what type of |what /i, "")
+                      .replace(/\?$/, "")}`}
+                    placeholder="Tell us more about the issue so we can match you with the right professional."
+                    value={answers[`${q.id}${OTHER_SUFFIX}`] || ""}
+                    onChange={(e) => {
+                      setAnswers((prev) => ({
+                        ...prev,
+                        [`${q.id}${OTHER_SUFFIX}`]: e.target.value,
+                      }));
+                      if (error) setError("");
+                    }}
+                    required
+                  />
+                )}
+              </div>
             ))}
             <Textarea
               label="Anything else we should know? (optional)"
@@ -105,7 +146,7 @@ export default function BookingDetailsPage() {
               Continue <ArrowRight className="size-4" />
             </Button>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

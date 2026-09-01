@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -18,6 +19,7 @@ export default function BookingContactPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [preferredContact, setPreferredContact] = useState("phone");
+  const [agreed, setAgreed] = useState(false);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -41,9 +43,10 @@ export default function BookingContactPage() {
       name: validateRequired(name, "Full name"),
       phone: validatePhone(phone),
       email: validateEmail(email),
+      agreed: agreed ? "" : "Please agree to the Terms & Conditions to continue.",
     };
     setErrors(newErrors);
-    if (newErrors.name || newErrors.phone || newErrors.email) return;
+    if (newErrors.name || newErrors.phone || newErrors.email || newErrors.agreed) return;
 
     saveDraft({ name, phone, email, preferredContact });
     router.push("/booking/review");
@@ -128,12 +131,41 @@ export default function BookingContactPage() {
               </div>
             </div>
 
+            <div>
+              <label className="flex cursor-pointer items-start gap-2.5 text-sm text-ink-muted">
+                <input
+                  type="checkbox"
+                  checked={agreed}
+                  onChange={(e) => {
+                    setAgreed(e.target.checked);
+                    if (errors.agreed) setErrors((prev) => ({ ...prev, agreed: "" }));
+                  }}
+                  className="mt-0.5 size-4 shrink-0 rounded border-border-strong text-brand-600 focus:ring-brand-500"
+                />
+                <span>
+                  I agree to the{" "}
+                  <Link
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-brand-700 underline hover:text-brand-800"
+                  >
+                    Terms &amp; Conditions
+                  </Link>{" "}
+                  and confirm the details above are correct.
+                </span>
+              </label>
+              {errors.agreed && (
+                <p className="mt-1.5 text-xs font-medium text-red-600">{errors.agreed}</p>
+              )}
+            </div>
+
             <div className="mt-2 flex items-center justify-between">
               <Button type="button" variant="outline" onClick={() => router.push("/booking/datetime")}>
                 <ArrowLeft className="size-4" /> Back
               </Button>
-              <Button type="submit">
-                Continue to Review <ArrowRight className="size-4" />
+              <Button type="submit" disabled={!agreed}>
+                Confirm Booking <ArrowRight className="size-4" />
               </Button>
             </div>
           </form>

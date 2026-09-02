@@ -1,106 +1,239 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Shield, LogOut, CheckSquare, List, Calendar as CalendarIcon, Settings as SettingsIcon, LayoutDashboard } from 'lucide-react';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { ShieldCheck, UserPlus, Phone, Mail, MapPin } from 'lucide-react';
+import './globals.css';
 
-export default function AdminLayout({ children }) {
+export default function RootLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [isAuth, setIsAuth] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const loggedIn = typeof window !== 'undefined' && localStorage.getItem('isAdminLoggedIn');
-    if (!loggedIn) {
-      router.replace('/admin-login');
-    } else {
-      setIsAuth(true);
-    }
-  }, [router]);
+    setMounted(true);
+  }, []);
 
-  const handleSignOut = () => {
-    localStorage.removeItem('isAdminLoggedIn');
-    router.replace('/');
+  const isAdminPage = pathname?.startsWith('/admin');
+
+  // Home Click: Smooth scroll to top
+  const handleHomeClick = (e) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
-  if (!isAuth) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-[#00667e] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  // Services / Book Navigation
+  const handleServicesClick = (e) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      const el = document.getElementById('services') || document.getElementById('booking-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
 
-  const navItems = [
-    { name: 'Review Queue', href: '/admin/dashboard', badge: '3', icon: CheckSquare },
-    { name: 'All Bookings', href: '/admin/bookings', icon: List },
-    { name: 'Calendar', href: '/admin/calendar', icon: CalendarIcon },
-    { name: 'Settings', href: '/admin/settings', icon: SettingsIcon },
-  ];
+  // Safe Navigation Handler
+  const handleAdminLoginClick = (e) => {
+    e.preventDefault();
+    if (!mounted) return;
+    
+    const isLoggedIn = typeof window !== 'undefined' && localStorage.getItem('isAdminLoggedIn');
+    if (isLoggedIn) {
+      router.push('/admin/dashboard');
+    } else {
+      router.push('/admin-login');
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#f3f7f8] text-slate-800 font-sans flex" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
-      
-      {/* 4. LEFT SIDEBAR */}
-      <aside className="w-64 bg-white border-r border-slate-200/80 p-6 flex flex-col justify-between shrink-0 min-h-screen">
-        <div className="space-y-6">
-          
-          {/* 1. Clickable Admin Dashboard Title */}
-          <Link href="/admin/dashboard" className="flex items-center gap-3 p-2 rounded-2xl hover:bg-slate-50 transition-all group">
-            <div className="w-10 h-10 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center border border-teal-200 shadow-xs group-hover:scale-105 transition-transform">
-              <Shield size={20} />
-            </div>
-            <div>
-              <h1 className="text-base font-bold text-slate-900 tracking-tight group-hover:text-[#00667e] transition-colors">Admin Dashboard</h1>
-              <p className="text-[11px] text-slate-500 font-medium">19 total bookings</p>
-            </div>
-          </Link>
-
-          {/* Sidebar Navigation */}
-          <nav className="space-y-1.5">
-            <p className="text-[10px] font-bold text-slate-400 uppercase px-3 mb-2">Main Menu</p>
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              const Icon = item.icon;
-              return (
+    <html lang="en">
+      <body suppressHydrationWarning={true} className="bg-slate-50 antialiased min-h-screen flex flex-col justify-between">
+        
+        {/* NAVBAR */}
+        {mounted && !isAdminPage && (
+          <div className="sticky top-0 z-50 w-full backdrop-blur-md bg-slate-50/80 py-3 transition-all border-b border-slate-200/50">
+            <div className="max-w-7xl mx-auto px-4">
+              <header className="bg-white/90 border border-slate-200/80 px-6 py-2.5 rounded-2xl shadow-sm flex items-center justify-between">
+                
+                {/* Logo */}
                 <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                    isActive
-                      ? 'bg-[#00667e] text-white shadow-md shadow-teal-950/10'
-                      : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
-                  }`}
+                  href="/"
+                  onClick={handleHomeClick}
+                  className="text-lg font-extrabold text-slate-900 bg-teal-50/80 hover:bg-teal-100/80 text-teal-800 px-4 py-1.5 rounded-xl flex items-center gap-2 border border-teal-200/60 transition-all hover:scale-105 active:scale-95"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <Icon size={16} />
-                    <span>{item.name}</span>
-                  </div>
-                  {item.badge && (
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] ${isActive ? 'bg-teal-900/60 text-white' : 'bg-slate-200 text-slate-700'}`}>
-                      {item.badge}
-                    </span>
-                  )}
+                  <span className="w-2.5 h-2.5 rounded-full bg-teal-600 animate-pulse"></span>
+                  ServiceHub
                 </Link>
-              );
-            })}
-          </nav>
-        </div>
 
-        {/* Sign Out Button */}
-        <button
-          onClick={handleSignOut}
-          className="w-full flex items-center justify-center gap-2 border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-700 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer mt-6"
-        >
-          <LogOut size={15} /> Sign out
-        </button>
-      </aside>
+                {/* Nav Links */}
+                <nav className="hidden md:flex items-center gap-1 bg-slate-100/70 p-1.5 rounded-2xl border border-slate-200/50">
+                  <Link
+                    href="/"
+                    onClick={handleHomeClick}
+                    className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                      pathname === '/' 
+                        ? 'bg-white text-slate-900 shadow-xs font-bold' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 hover:font-bold'
+                    }`}
+                  >
+                    Home
+                  </Link>
 
-      {/* MAIN CONTENT AREA */}
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="max-w-6xl mx-auto">{children}</div>
-      </main>
-    </div>
+                  <Link
+                    href="/#services"
+                    onClick={handleServicesClick}
+                    className="px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 hover:font-bold transition-all duration-200"
+                  >
+                    Book a Service
+                  </Link>
+
+                  <Link
+                    href="/about"
+                    className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                      pathname === '/about' 
+                        ? 'bg-white text-slate-900 shadow-xs font-bold' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 hover:font-bold'
+                    }`}
+                  >
+                    About
+                  </Link>
+                </nav>
+
+                {/* Right Action Buttons */}
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handleAdminLoginClick}
+                    className="text-xs font-bold text-teal-800 bg-teal-50 border border-teal-200/80 hover:bg-teal-100/80 px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-2xs hover:shadow-xs hover:scale-105 active:scale-95 cursor-pointer"
+                  >
+                    <ShieldCheck size={14} className="text-teal-600" />
+                    Admin Login
+                  </button>
+
+                  <Link
+                    href="/signup"
+                    className="bg-[#00667e] hover:bg-[#005266] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-teal-900/10 flex items-center gap-1.5 transition-all hover:scale-105 hover:shadow-lg active:scale-95"
+                  >
+                    <UserPlus size={14} />
+                    Sign Up
+                  </Link>
+                </div>
+              </header>
+            </div>
+          </div>
+        )}
+
+        {/* PAGE CONTENT */}
+        <main className="flex-1">{children}</main>
+
+        {/* FOOTER */}
+        {mounted && !isAdminPage && (
+          <footer className="bg-slate-900 text-slate-300 mt-20 border-t border-slate-800">
+            <div className="max-w-7xl mx-auto px-6 py-12">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                
+                {/* Brand Info */}
+                <div className="space-y-4">
+                  <Link
+                    href="/"
+                    onClick={handleHomeClick}
+                    className="text-xl font-extrabold text-white flex items-center gap-2 hover:scale-105 transition-transform duration-200 origin-left inline-block"
+                  >
+                    <span className="w-3 h-3 rounded-full bg-teal-500 inline-block animate-pulse"></span>
+                    ServiceHub
+                  </Link>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Reliable, fast, and professional home services. Get it fixed, not stressed.
+                  </p>
+                </div>
+
+                {/* Quick Links */}
+                <div>
+                  <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-4">Quick Links</h4>
+                  <ul className="space-y-2.5 text-xs">
+                    <li>
+                      <Link href="/" onClick={handleHomeClick} className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
+                        Home
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/#services" onClick={handleServicesClick} className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 cursor-pointer inline-block text-left">
+                        Book a Service
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/about" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
+                        About Us
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/booking/terms" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
+                        Terms & Conditions
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Account Links */}
+                <div>
+                  <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-4">Account</h4>
+                  <ul className="space-y-2.5 text-xs">
+                    <li>
+                      <Link href="/signup" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
+                        Customer Sign Up
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/login" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
+                        Customer Login
+                      </Link>
+                    </li>
+                    <li>
+                      <button onClick={handleAdminLoginClick} className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 cursor-pointer inline-block text-left">
+                        Admin Login
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Contact Info */}
+                <div>
+                  <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-4">Contact Us</h4>
+                  <ul className="space-y-3 text-xs">
+                    <li className="flex items-center gap-2 hover:text-teal-400 transition-colors cursor-pointer group">
+                      <Phone size={14} className="text-teal-500 group-hover:scale-125 transition-transform" />
+                      <span>+1 (555) 019-2834</span>
+                    </li>
+                    <li className="flex items-center gap-2 hover:text-teal-400 transition-colors cursor-pointer group">
+                      <Mail size={14} className="text-teal-500 group-hover:scale-125 transition-transform" />
+                      <span>support@servicehub.com</span>
+                    </li>
+                    <li className="flex items-center gap-2 hover:text-teal-400 transition-colors cursor-pointer group">
+                      <MapPin size={14} className="text-teal-500 group-hover:scale-125 transition-transform" />
+                      <span>123 Service Street, Business Hub</span>
+                    </li>
+                  </ul>
+                </div>
+
+              </div>
+
+              {/* Bottom Copyright */}
+              <div className="border-t border-slate-800 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+                <p>© {new Date().getFullYear()} ServiceHub. All rights reserved.</p>
+                <div className="flex gap-4">
+                  <Link href="/booking/terms" className="hover:text-teal-400 transition-colors">Privacy Policy</Link>
+                  <Link href="/booking/terms" className="hover:text-teal-400 transition-colors">Terms of Service</Link>
+                </div>
+              </div>
+
+            </div>
+          </footer>
+        )}
+
+      </body>
+    </html>
   );
 }

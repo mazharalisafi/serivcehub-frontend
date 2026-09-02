@@ -76,7 +76,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative border-y border-border bg-brand-50/70">
+          <section id="services" className="relative border-y border-border bg-brand-50/70">
         <div className="mx-auto max-w-6xl px-6 py-20">
           <Reveal as="div" className="mx-auto max-w-xl text-center">
             <span className="text-xs font-semibold uppercase tracking-wide text-brand-600">Our Services</span>

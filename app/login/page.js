@@ -1,85 +1,71 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Mail, MailCheck } from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { PageBackground } from "@/components/layout/PageBackground";
-import { validateEmail } from "@/lib/validators";
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ShieldCheck, Lock, Mail } from 'lucide-react';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
 
-  function handleSubmit(e) {
+  const handleLogin = (e) => {
     e.preventDefault();
-    const err = validateEmail(email);
-    if (err) {
-      setError(err);
-      return;
-    }
-    setError("");
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSent(true);
-    }, 600);
-  }
+    // Set authentication token / state
+    localStorage.setItem('isAdminLoggedIn', 'true');
+    router.push('/admin/dashboard');
+  };
 
   return (
-    <section className="relative flex min-h-[calc(100vh-64px)] items-center justify-center overflow-hidden px-6 py-16 bg-brand-50/50">
-      <PageBackground />
+    <div className="min-h-[85vh] flex items-center justify-center p-4">
+      <div className="bg-white/80 backdrop-blur-md border border-slate-200/80 p-8 rounded-3xl shadow-xl max-w-md w-full space-y-6">
+        <div className="text-center space-y-2">
+          <div className="w-12 h-12 bg-teal-50 border border-teal-200 rounded-2xl flex items-center justify-center mx-auto text-teal-700 shadow-sm">
+            <ShieldCheck size={26} />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Admin Portal</h2>
+          <p className="text-xs text-slate-500 font-medium">Please enter your credentials to access dashboard</p>
+        </div>
 
-      <div className="animate-fade-up w-full max-w-md rounded-[--radius-lg] border-2 border-brand-100 bg-surface p-8 text-center shadow-lg sm:p-10">
-        {!sent ? (
-          <>
-            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-brand-50">
-              <Mail className="size-5 text-brand-600" />
-            </div>
-            <h1 className="mt-4 font-display text-2xl font-bold text-ink">Log in to ServiceHub</h1>
-            <p className="mt-2 text-sm text-ink-muted">
-              Enter your email and we&apos;ll send you a magic link - no password needed.
-            </p>
-
-            <form onSubmit={handleSubmit} className="mt-8 text-left">
-              <Input
-                label="Email address"
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-3.5 top-3 text-slate-400" size={18} />
+              <input
                 type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (error) setError("");
-                }}
-                error={error}
                 required
+                placeholder="admin@servicehub.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#00667e] focus:bg-white transition-all"
               />
-              <Button type="submit" size="lg" className="mt-4 w-full" loading={loading}>
-                Send magic link
-              </Button>
-            </form>
-          </>
-        ) : (
-          <>
-            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-brand-600">
-              <MailCheck className="size-5 text-white" />
             </div>
-            <h1 className="mt-4 font-display text-2xl font-bold text-ink">Check your email</h1>
-            <p className="mt-2 text-sm text-ink-muted">
-              We&apos;ve sent a magic link to <span className="font-semibold text-ink">{email}</span>.
-              Click the link in that email to log in.
-            </p>
-            <button
-              onClick={() => setSent(false)}
-              className="mt-6 text-sm font-medium text-brand-600 hover:text-brand-700"
-            >
-              Use a different email
-            </button>
-          </>
-        )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3.5 top-3 text-slate-400" size={18} />
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#00667e] focus:bg-white transition-all"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 bg-[#00667e] hover:bg-[#005266] text-white font-bold rounded-xl text-sm shadow-md shadow-teal-900/10 transition-all hover:shadow-lg active:scale-[0.99]"
+          >
+            Sign In to Dashboard
+          </button>
+        </form>
       </div>
-    </section>
+    </div>
   );
 }

@@ -11,12 +11,13 @@ const STYLES = {
   "No-show": "bg-ink text-white",
 };
 
-export function StatusBadge({ status }) {
+export function StatusBadge({ status, className }) {
   return (
     <span
       className={cn(
         "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap",
-        STYLES[status] || "bg-border text-ink-muted"
+        STYLES[status] || "bg-border text-ink-muted",
+        className
       )}
     >
       {status}

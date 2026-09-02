@@ -19,7 +19,7 @@ export default function BookingConfirmationPage() {
     hasLoaded.current = true;
 
     const d = getDraft();
-    if (!d.service || !d.date || !d.phone || !d.reference) {
+    if (!d.service || !d.date || !d.phone || !d.email || !d.reference) {
       router.replace("/booking");
       return;
     }
@@ -48,7 +48,7 @@ export default function BookingConfirmationPage() {
 
         <p className="max-w-sm text-sm text-ink-muted">
           We&apos;ve received your {service?.label.toLowerCase()} booking for {draft.date} at {draft.time}.
-          A confirmation will be sent via SMS shortly - save your reference number above.
+          A confirmation will be sent via {draft.preferredContact === "email" ? "email" : "SMS"} shortly - save your reference number above.
         </p>
         <Link href="/" className="mt-2">
           <Button>Back to Home</Button>

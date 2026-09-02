@@ -25,6 +25,17 @@ export default function RootLayout({ children }) {
     }
   };
 
+  // Services Click Handler: Smooth Scroll to Services Section
+  const handleServicesClick = (e) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      const el = document.getElementById('services');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   // Safe Navigation Handler
   const handleAdminLoginClick = (e) => {
     e.preventDefault();
@@ -72,6 +83,7 @@ export default function RootLayout({ children }) {
 
                   <Link
                     href="/#services"
+                    onClick={handleServicesClick}
                     className="px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 hover:font-bold transition-all duration-200"
                   >
                     Book a Service
@@ -91,13 +103,6 @@ export default function RootLayout({ children }) {
 
                 {/* Actions */}
                 <div className="flex items-center gap-3">
-                  <Link
-                    href="/login"
-                    className="text-xs font-bold text-slate-600 hover:text-slate-900 px-3 py-2 rounded-xl hover:bg-slate-100 transition-all"
-                  >
-                    Log in
-                  </Link>
-
                   <button
                     onClick={handleAdminLoginClick}
                     className="text-xs font-bold text-teal-800 bg-teal-50 border border-teal-200/80 hover:bg-teal-100/80 px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer"
@@ -108,6 +113,7 @@ export default function RootLayout({ children }) {
 
                   <Link
                     href="/#services"
+                    onClick={handleServicesClick}
                     className="bg-[#00667e] hover:bg-[#005266] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-teal-900/10 flex items-center gap-1.5 transition-all hover:gap-2 active:scale-95"
                   >
                     Book Now

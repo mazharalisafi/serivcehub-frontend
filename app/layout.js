@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ShieldCheck, UserPlus, Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
+import { ShieldCheck, UserPlus, Phone, Mail, MapPin } from 'lucide-react';
 import './globals.css';
 
 export default function RootLayout({ children }) {
@@ -25,8 +25,7 @@ export default function RootLayout({ children }) {
     }
   };
 
-<<<<<<< HEAD
-  // Book Navigation Fix
+  // Book Navigation
   const handleBookClick = (e) => {
     if (pathname === '/') {
       const bookingSection = document.getElementById('booking-section') || document.getElementById('services');
@@ -40,20 +39,6 @@ export default function RootLayout({ children }) {
   };
 
   // Admin Login Navigation
-=======
-  // Services Click Handler: Smooth Scroll to Services Section
-  const handleServicesClick = (e) => {
-    if (pathname === '/') {
-      e.preventDefault();
-      const el = document.getElementById('services');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
-
-  // Safe Navigation Handler
->>>>>>> 7e18783265cc1633bfa7bae25f3a6ae4a76ed1b6
   const handleAdminLoginClick = (e) => {
     e.preventDefault();
     if (!mounted) return;
@@ -100,17 +85,10 @@ export default function RootLayout({ children }) {
                     Home
                   </Link>
 
-<<<<<<< HEAD
-                  {/* Fixed Book a Service Button */}
+                  {/* Book a Service Button */}
                   <button
                     onClick={handleBookClick}
                     className="px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 hover:font-bold transition-all duration-200 cursor-pointer"
-=======
-                  <Link
-                    href="/#services"
-                    onClick={handleServicesClick}
-                    className="px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 hover:font-bold transition-all duration-200"
->>>>>>> 7e18783265cc1633bfa7bae25f3a6ae4a76ed1b6
                   >
                     Book a Service
                   </button>
@@ -137,16 +115,10 @@ export default function RootLayout({ children }) {
                     Admin Login
                   </button>
 
-                  {/* New Sign Up Button */}
+                  {/* Sign Up Button */}
                   <Link
-<<<<<<< HEAD
                     href="/signup"
                     className="bg-[#00667e] hover:bg-[#005266] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-teal-900/10 flex items-center gap-1.5 transition-all hover:scale-105 hover:shadow-lg active:scale-95"
-=======
-                    href="/#services"
-                    onClick={handleServicesClick}
-                    className="bg-[#00667e] hover:bg-[#005266] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-teal-900/10 flex items-center gap-1.5 transition-all hover:gap-2 active:scale-95"
->>>>>>> 7e18783265cc1633bfa7bae25f3a6ae4a76ed1b6
                   >
                     <UserPlus size={14} />
                     Sign Up
@@ -201,7 +173,7 @@ export default function RootLayout({ children }) {
                       </Link>
                     </li>
                     <li>
-                      <Link href="/term" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
+                      <Link href="/booking/terms" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
                         Terms & Conditions
                       </Link>
                     </li>
@@ -255,8 +227,8 @@ export default function RootLayout({ children }) {
               <div className="border-t border-slate-800 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
                 <p>© {new Date().getFullYear()} ServiceHub. All rights reserved.</p>
                 <div className="flex gap-4">
-                  <Link href="/term" className="hover:text-teal-400 transition-colors">Privacy Policy</Link>
-                  <Link href="/term" className="hover:text-teal-400 transition-colors">Terms of Service</Link>
+                  <Link href="/booking/terms" className="hover:text-teal-400 transition-colors">Privacy Policy</Link>
+                  <Link href="/booking/terms" className="hover:text-teal-400 transition-colors">Terms of Service</Link>
                 </div>
               </div>
 

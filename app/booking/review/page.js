@@ -41,7 +41,6 @@ export default function BookingReviewPage() {
   const router = useRouter();
   const [draft, setDraft] = useState(null);
   const [agreed, setAgreed] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const d = getDraft();
@@ -58,10 +57,7 @@ export default function BookingReviewPage() {
   const questions = SERVICE_QUESTIONS[service.id] || [];
 
   function handleConfirm() {
-    if (!agreed) {
-      setError("Please agree to the Terms & Conditions to continue.");
-      return;
-    }
+    if (!agreed) return;
     saveDraft({ reference: generateReference() });
     router.push("/booking/confirmation");
   }
@@ -115,31 +111,27 @@ export default function BookingReviewPage() {
             </div>
           </div>
 
-          <label className="mt-5 flex items-start gap-2 text-sm text-ink-muted">
+          <label className="mt-5 flex items-start gap-2 text-sm text-ink-muted cursor-pointer">
             <input
               type="checkbox"
               checked={agreed}
-              onChange={(e) => {
-                setAgreed(e.target.checked);
-                if (error) setError("");
-              }}
-              className="mt-0.5 size-4 rounded border-border-strong accent-brand-600"
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="mt-0.5 size-4 rounded border-border-strong accent-brand-600 cursor-pointer shrink-0"
             />
             <span>
               I agree to the{" "}
-              <a href="#" className="font-medium text-brand-600 hover:text-brand-700">
+              <a href="/booking/terms" className="font-medium text-brand-600 hover:text-brand-700 underline">
                 Terms & Conditions
               </a>{" "}
               and confirm the details above are correct.
             </span>
           </label>
-          {error && <p className="mt-1 text-xs text-danger-strong">{error}</p>}
 
           <div className="mt-6 flex items-center justify-between">
             <Button variant="outline" onClick={() => router.push("/booking/contact")}>
               <ArrowLeft className="size-4" /> Back
             </Button>
-            <Button onClick={handleConfirm}>
+            <Button onClick={handleConfirm} disabled={!agreed}>
               <CheckCircle2 className="size-4" /> Confirm Booking
             </Button>
           </div>

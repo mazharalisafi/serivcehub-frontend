@@ -9,7 +9,6 @@ export default function SaaSAdminDashboard() {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const revenueData = [40, 65, 80, 55, 70, 95, 60, 85, 50, 75, 45, 90];
 
-  // Active Popup Modal State
   const [activeModal, setActiveModal] = useState(null);
 
   return (
@@ -68,7 +67,7 @@ export default function SaaSAdminDashboard() {
         </div>
       </div>
 
-      {/* Quick Admin Actions (Interactive Buttons) */}
+      {/* Quick Admin Actions */}
       <div className="bg-gradient-to-r from-[#00667e] to-teal-700 p-4 rounded-2xl text-white shadow-md flex flex-wrap items-center justify-between gap-4">
         <div>
           <h4 className="font-bold text-sm">Quick Admin Actions</h4>
@@ -100,7 +99,7 @@ export default function SaaSAdminDashboard() {
         </div>
       </div>
 
-      {/* Analytics Charts */}
+      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-6">
           <div className="flex items-center justify-between">
@@ -159,49 +158,79 @@ export default function SaaSAdminDashboard() {
         </div>
       </div>
 
-      {/* POPUP ACTION MODAL */}
-      {activeModal && (
+      {/* 2. DISTINCT MODALS */}
+      {activeModal === 'quote' && (
         <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-100">
             <div className="flex items-center justify-between border-b pb-3 border-slate-100">
-              <h3 className="font-bold text-slate-900 text-base">
-                {activeModal === 'quote' ? 'Create New Quote' : 'Enter Customer Payment'}
+              <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
+                <FileText size={18} className="text-[#00667e]" /> Create Service Quote
               </h3>
-              <button 
-                onClick={() => setActiveModal(null)}
-                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
-              >
+              <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-700 p-1 rounded-lg">
                 <X size={18} />
               </button>
             </div>
 
-            <form onSubmit={(e) => { e.preventDefault(); setActiveModal(null); alert('Action saved successfully!'); }} className="space-y-3">
+            <form onSubmit={(e) => { e.preventDefault(); setActiveModal(null); alert('Quote created & sent to client!'); }} className="space-y-3">
               <div>
-                <label className="text-xs font-bold text-slate-600 block mb-1">Customer Name</label>
-                <input type="text" required placeholder="e.g. John Doe" className="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-600" />
+                <label className="text-xs font-bold text-slate-600 block mb-1">Customer Name / Email</label>
+                <input type="text" required placeholder="client@example.com" className="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-600" />
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-600 block mb-1">
-                  {activeModal === 'quote' ? 'Estimated Amount ($)' : 'Payment Amount ($)'}
-                </label>
-                <input type="number" required placeholder="0.00" className="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-600" />
+                <label className="text-xs font-bold text-slate-600 block mb-1">Scope of Work / Service Description</label>
+                <textarea required placeholder="e.g. Full Plumbing Repair & Maintenance" className="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-600 h-20" />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1">Estimated Amount ($)</label>
+                <input type="number" required placeholder="150.00" className="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-600" />
               </div>
 
               <div className="pt-2 flex justify-end gap-2">
-                <button 
-                  type="button" 
-                  onClick={() => setActiveModal(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#00667e] hover:bg-[#005266] text-white shadow-sm"
-                >
-                  Save Action
-                </button>
+                <button type="button" onClick={() => setActiveModal(null)} className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100">Cancel</button>
+                <button type="submit" className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#00667e] hover:bg-[#005266] text-white">Send Quote</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'payment' && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-100">
+            <div className="flex items-center justify-between border-b pb-3 border-slate-100">
+              <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
+                <CreditCard size={18} className="text-emerald-600" /> Record Payment
+              </h3>
+              <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-700 p-1 rounded-lg">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={(e) => { e.preventDefault(); setActiveModal(null); alert('Payment recorded!'); }} className="space-y-3">
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1">Invoice / Booking ID</label>
+                <input type="text" required placeholder="e.g. #INV-8821" className="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-600" />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1">Payment Method</label>
+                <select className="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-600 bg-white">
+                  <option>Credit / Debit Card</option>
+                  <option>Bank Transfer</option>
+                  <option>Cash</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1">Amount Paid ($)</label>
+                <input type="number" required placeholder="250.00" className="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-600" />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2">
+                <button type="button" onClick={() => setActiveModal(null)} className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100">Cancel</button>
+                <button type="submit" className="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white">Record Payment</button>
               </div>
             </form>
           </div>

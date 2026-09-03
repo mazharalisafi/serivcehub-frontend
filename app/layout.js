@@ -172,11 +172,11 @@ export default function RootLayout({ children }) {
                         About Us
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link href="/booking/terms" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
                         Terms & Conditions
                       </Link>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
 

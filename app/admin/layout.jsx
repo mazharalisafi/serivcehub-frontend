@@ -14,31 +14,29 @@ import {
   CreditCard,
   Bell,
   Search,
-  X
+  X,
+  Menu,
+  Grid
 } from 'lucide-react';
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([
     { id: 1, title: 'New Booking Request', desc: 'John Doe booked Home Cleaning for 2:00 PM', time: '5m ago', unread: true },
     { id: 2, title: 'Payment Received', desc: 'Received $150.00 for Invoice #INV-1024', time: '1h ago', unread: true },
-    { id: 3, title: 'New Customer Registered', desc: 'Sarah Smith created an account', time: '3h ago', unread: false },
   ]);
 
   const handleLogout = () => {
-    // Session / Storage clear karna
     localStorage.clear();
     sessionStorage.clear();
-
-    // Browser cookies expire karna
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie = "adminToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
-    // Home page par redirect karna
     router.push('/');
     router.refresh();
   };
@@ -47,8 +45,11 @@ export default function AdminLayout({ children }) {
     setNotifications(notifications.map(n => ({ ...n, unread: false })));
   };
 
+  // Sidebar links with "Services & Categories" and "Calendar" added
   const navItems = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+    { name: 'Services & Categories', href: '/admin/services', icon: Grid },
+    { name: 'Calendar', href: '/admin/calendar', icon: Calendar },
     { name: 'Bookings', href: '/admin/bookings', icon: Calendar },
     { name: 'Customers', href: '/admin/customers', icon: Users },
     { name: 'Invoices', href: '/admin/invoices', icon: FileText },
@@ -60,17 +61,42 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="flex h-screen bg-slate-100 font-sans overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800">
-        <div className="h-16 flex items-center px-6 border-b border-slate-800 gap-3">
-          <div className="bg-teal-500 p-2 rounded-lg text-slate-900">
-            <ShieldCheck className="w-5 h-5 stroke-[2.5]" />
-          </div>
-          <span className="text-lg font-bold text-white tracking-wide">
-            AdminPortal
-          </span>
+      {/* Mobile Backdrop Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 bg-slate-900/60 z-40 md:hidden backdrop-blur-sm transition-opacity"
+        />
+      )}
+
+      {/* Sidebar Navigation */}
+      <aside className={`
+        fixed md:static inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800 transition-transform duration-300 ease-in-out
+        ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}>
+        {/* Brand Header */}
+        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800">
+          <Link 
+            href="/admin/dashboard" 
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-3 group cursor-pointer"
+          >
+            <div className="bg-teal-500 p-2 rounded-lg text-slate-900 group-hover:bg-teal-400 transition-colors">
+              <ShieldCheck className="w-5 h-5 stroke-[2.5]" />
+            </div>
+            <span className="text-lg font-bold text-white tracking-wide group-hover:text-teal-400 transition-colors">
+              AdminPortal
+            </span>
+          </Link>
+          <button 
+            onClick={() => setMobileMenuOpen(false)}
+            className="md:hidden text-slate-400 hover:text-white p-1"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
+        {/* Navigation Items */}
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -79,6 +105,7 @@ export default function AdminLayout({ children }) {
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-teal-600 text-white'
@@ -92,7 +119,7 @@ export default function AdminLayout({ children }) {
           })}
         </nav>
 
-        {/* Logout Section */}
+        {/* User Account / Logout */}
         <div className="p-4 border-t border-slate-800">
           <div className="flex items-center gap-3 mb-3 px-2">
             <div className="w-9 h-9 rounded-full bg-teal-500 flex items-center justify-center font-bold text-slate-900 text-sm">
@@ -113,21 +140,29 @@ export default function AdminLayout({ children }) {
         </div>
       </aside>
 
-      {/* Main Content Viewport */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0 relative z-20">
-          <div className="relative w-72">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full pl-9 pr-4 py-1.5 bg-slate-100 rounded-lg text-xs border border-transparent focus:border-teal-500 focus:bg-white focus:outline-none transition-all"
-            />
+        {/* Navbar */}
+        <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between shrink-0 relative z-20">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 text-slate-600 hover:text-slate-900 rounded-lg md:hidden hover:bg-slate-100"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+
+            <div className="relative w-48 sm:w-72 hidden sm:block">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full pl-9 pr-4 py-1.5 bg-slate-100 rounded-lg text-xs border border-transparent focus:border-teal-500 focus:bg-white focus:outline-none transition-all"
+              />
+            </div>
           </div>
 
           <div className="flex items-center gap-4 relative">
-            {/* Notification Button */}
             <button 
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors cursor-pointer focus:outline-none"
@@ -138,9 +173,8 @@ export default function AdminLayout({ children }) {
               )}
             </button>
 
-            {/* Notification Popup Menu */}
             {showNotifications && (
-              <div className="absolute right-0 top-12 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
+              <div className="absolute right-0 top-12 w-72 sm:w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
                 <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <h3 className="text-xs font-bold text-slate-800">Notifications</h3>
@@ -188,7 +222,7 @@ export default function AdminLayout({ children }) {
         </header>
 
         {/* Page Content Viewport */}
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8">
           {children}
         </main>
       </div>

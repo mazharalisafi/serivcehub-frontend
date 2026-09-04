@@ -45,7 +45,6 @@ export default function AdminLayout({ children }) {
     setNotifications(notifications.map(n => ({ ...n, unread: false })));
   };
 
-  // Sidebar links with "Services & Categories" and "Calendar" added
   const navItems = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Services & Categories', href: '/admin/services', icon: Grid },
@@ -119,17 +118,26 @@ export default function AdminLayout({ children }) {
           })}
         </nav>
 
-        {/* User Account / Logout */}
+        {/* User Account / Logout (Clickable Admin User Profile -> Settings) */}
         <div className="p-4 border-t border-slate-800">
-          <div className="flex items-center gap-3 mb-3 px-2">
-            <div className="w-9 h-9 rounded-full bg-teal-500 flex items-center justify-center font-bold text-slate-900 text-sm">
+          <Link
+            href="/admin/settings"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-3 mb-3 p-2 rounded-lg hover:bg-slate-800/80 transition-all cursor-pointer group"
+          >
+            <div className="w-9 h-9 rounded-full bg-teal-500 flex items-center justify-center font-bold text-slate-900 text-sm group-hover:scale-105 transition-transform">
               AD
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-medium text-white truncate">Admin User</span>
-              <span className="text-xs text-slate-500 truncate">admin@servicehub.com</span>
+              <span className="text-sm font-bold text-white group-hover:text-teal-400 transition-colors truncate">
+                Admin User
+              </span>
+              <span className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors truncate">
+                admin@servicehub.com
+              </span>
             </div>
-          </div>
+          </Link>
+
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-xs font-semibold text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"

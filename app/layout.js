@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ShieldCheck, UserPlus, Phone, Mail, MapPin } from 'lucide-react';
+import { ShieldCheck, LogIn, Phone, Mail, MapPin } from 'lucide-react';
 import './globals.css';
 
 export default function RootLayout({ children }) {
@@ -115,13 +115,13 @@ export default function RootLayout({ children }) {
                     Admin Login
                   </button>
 
-                  {/* Sign Up Button */}
+                  {/* Active Sign In Button */}
                   <Link
-                    href="/signup"
+                    href="/login"
                     className="bg-[#00667e] hover:bg-[#005266] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-teal-900/10 flex items-center gap-1.5 transition-all hover:scale-105 hover:shadow-lg active:scale-95"
                   >
-                    <UserPlus size={14} />
-                    Sign Up
+                    <LogIn size={14} />
+                    Sign In
                   </Link>
                 </div>
               </header>
@@ -172,11 +172,6 @@ export default function RootLayout({ children }) {
                         About Us
                       </Link>
                     </li>
-                    {/* <li>
-                      <Link href="/booking/terms" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
-                        Terms & Conditions
-                      </Link>
-                    </li> */}
                   </ul>
                 </div>
 
@@ -185,13 +180,8 @@ export default function RootLayout({ children }) {
                   <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-4">Account</h4>
                   <ul className="space-y-2.5 text-xs">
                     <li>
-                      <Link href="/signup" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
-                        Customer Sign Up
-                      </Link>
-                    </li>
-                    <li>
                       <Link href="/login" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
-                        Customer Login
+                        Customer Sign In
                       </Link>
                     </li>
                     <li>
@@ -227,8 +217,8 @@ export default function RootLayout({ children }) {
               <div className="border-t border-slate-800 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
                 <p>© {new Date().getFullYear()} ServiceHub. All rights reserved.</p>
                 <div className="flex gap-4">
-                  <Link href="/booking/terms" className="hover:text-teal-400 transition-colors">Privacy Policy</Link>
-                  <Link href="/booking/terms" className="hover:text-teal-400 transition-colors">Terms of Service</Link>
+                  <Link href="/term" className="hover:text-teal-400 transition-colors">Privacy Policy</Link>
+                  <Link href="/term" className="hover:text-teal-400 transition-colors">Terms of Service</Link>
                 </div>
               </div>
 

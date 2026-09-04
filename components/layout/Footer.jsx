@@ -16,12 +16,12 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Quick Links - TERMS & CONDITIONS REMOVED */}
+        {/* Quick Links */}
         <div>
           <h4 className="text-white font-bold uppercase tracking-wider text-[11px] mb-4">Quick Links</h4> 
           <ul className="space-y-2.5">
             <li><Link href="/" className="hover:text-teal-400 transition-colors">Home</Link></li>
-            <li><Link href="/services" className="hover:text-teal-400 transition-colors">Book a Service</Link></li>
+            <li><Link href="/booking" className="hover:text-teal-400 transition-colors">Book a Service</Link></li>
             <li><Link href="/about" className="hover:text-teal-400 transition-colors">About Us</Link></li>
           </ul>
         </div>
@@ -30,9 +30,8 @@ export default function Footer() {
         <div>
           <h4 className="text-white font-bold uppercase tracking-wider text-[11px] mb-4">Account</h4>
           <ul className="space-y-2.5">
-            <li><Link href="/signup" className="hover:text-teal-400 transition-colors">Customer Sign Up</Link></li>
-            <li><Link href="/login" className="hover:text-teal-400 transition-colors">Customer Login</Link></li>
-            <li><Link href="/admin/login" className="hover:text-teal-400 transition-colors">Admin Login</Link></li>
+            <li><Link href="/login" className="hover:text-teal-400 transition-colors">Customer Sign In</Link></li>
+            <li><Link href="/admin-login" className="hover:text-teal-400 transition-colors">Admin Login</Link></li>
           </ul>
         </div>
 
@@ -60,7 +59,7 @@ export default function Footer() {
         <p>© 2026 ServiceHub. All rights reserved.</p>
         <div className="flex gap-4">
           <Link href="/privacy" className="hover:text-slate-400 transition-colors">Privacy Policy</Link>
-          <Link href="/terms" className="hover:text-slate-400 transition-colors">Terms of Service</Link>
+          <Link href="/term" className="hover:text-slate-400 transition-colors">Terms of Service</Link>
         </div>
       </div>
     </footer>

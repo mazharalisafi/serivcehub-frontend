@@ -1,147 +1,154 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { PageBackground } from "@/components/layout/PageBackground";
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { BookingSteps } from "@/components/booking/BookingSteps";
-import { cn } from "@/lib/utils";
 import { getDraft, saveDraft } from "@/lib/bookingDraft";
-import { validateEmail, validatePhone, validateRequired } from "@/lib/validators";
+import { User, Mail, Phone, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export default function BookingContactPage() {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [preferredContact, setPreferredContact] = useState("phone");
-  const [errors, setErrors] = useState({});
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
+
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [contactMethod, setContactMethod] = useState('Phone');
 
   useEffect(() => {
-    const draft = getDraft();
-    if (!draft.service || !draft.date) {
-      router.replace("/booking");
-      return;
-    }
-    setName(draft.name || "");
-    setPhone(draft.phone || "");
-    setEmail(draft.email || "");
-    setPreferredContact(draft.preferredContact || "phone");
-    setReady(true);
-  }, [router]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const currentDraft = getDraft();
+    if (currentDraft?.fullName) setFullName(currentDraft.fullName);
+    if (currentDraft?.phone) setPhone(currentDraft.phone);
+    if (currentDraft?.email) setEmail(currentDraft.email);
+    if (currentDraft?.contactMethod) setContactMethod(currentDraft.contactMethod);
+  }, []);
 
-  if (!ready) return null;
-
-  // Check if all fields are filled
-  const isFormFilled = name.trim() !== "" && phone.trim() !== "" && email.trim() !== "";
-
-  function handleSubmit(e) {
+  const handleNext = (e) => {
     e.preventDefault();
-    const newErrors = {
-      name: validateRequired(name, "Full name"),
-      phone: validatePhone(phone),
-      email: validateEmail(email),
-    };
-    setErrors(newErrors);
-    if (newErrors.name || newErrors.phone || newErrors.email) return;
+    if (!fullName || !phone || !email) return;
 
-    saveDraft({ name, phone, email, preferredContact });
-    router.push("/booking/review");
-  }
+    saveDraft({
+      fullName,
+      phone,
+      email,
+      contactMethod
+    });
+
+    router.push('/booking/review');
+  };
 
   return (
-    <section className="relative overflow-hidden bg-brand-50/50">
-      <PageBackground />
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-teal-950 to-indigo-950 text-white py-10 px-4">
+      <div className="max-w-3xl mx-auto space-y-8">
+        <BookingSteps currentStep={5} />
 
-      <div className="mx-auto max-w-3xl px-6 py-16">
-        <BookingSteps current={5} />
-
-        <div className="animate-fade-up rounded-[--radius-lg] border-2 border-brand-100 bg-surface p-6 shadow-sm transition-colors hover:border-brand-200 sm:p-8">
-          <h3 className="font-display text-lg font-semibold text-ink">Your contact details</h3>
-          <p className="mt-1 text-sm text-ink-muted">
-            We&apos;ll use these to keep you updated on your booking.
-          </p>
-
-          <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-            <Input
-              label="Full name"
-              placeholder="John Smith"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
-              }}
-              error={errors.name}
-              required
-            />
-            <Input
-              label="Phone number"
-              type="tel"
-              placeholder="04XX XXX XXX"
-              value={phone}
-              onChange={(e) => {
-                const value = e.target.value;
-                setPhone(value);
-                setErrors((prev) => ({
-                  ...prev,
-                  phone: value.trim() ? "" : prev.phone && "Phone number is required.",
-                }));
-              }}
-              error={errors.phone}
-              required
-            />
-            <Input
-              label="Email address"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => {
-                const value = e.target.value;
-                setEmail(value);
-                setErrors((prev) => ({
-                  ...prev,
-                  email: value.trim() ? "" : prev.email && "Email is required.",
-                }));
-              }}
-              error={errors.email}
-              required
-            />
-
-            <div>
-              <p className="text-sm font-medium text-ink">Preferred contact method</p>
-              <div className="mt-2 flex gap-2">
-                {["phone", "email"].map((method) => (
-                  <button
-                    key={method}
-                    type="button"
-                    onClick={() => setPreferredContact(method)}
-                    className={cn(
-                      "flex-1 rounded-[--radius-md] border px-4 py-2 text-sm font-semibold capitalize transition-colors",
-                      preferredContact === method
-                        ? "border-brand-600 bg-brand-50 text-brand-700"
-                        : "border-border-strong text-ink-muted hover:text-ink"
-                    )}
-                  >
-                    {method}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-2 flex items-center justify-between">
-              <Button type="button" variant="outline" onClick={() => router.push("/booking/datetime")}>
-                <ArrowLeft className="size-4" /> Back
-              </Button>
-              <Button type="submit" disabled={!isFormFilled}>
-                Confirm Booking <ArrowRight className="size-4" />
-              </Button>
-            </div>
-          </form>
+        <div className="text-center space-y-2">
+          <span className="text-xs font-bold text-teal-300 uppercase tracking-widest px-3 py-1 bg-teal-900/60 rounded-full border border-teal-500/30">
+            Step 5: Contact
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Your contact details</h1>
+          <p className="text-sm text-slate-400">We'll use these to keep you updated on your booking.</p>
         </div>
+
+        <form onSubmit={handleNext} className="bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl space-y-5">
+          
+          {/* Full Name Input */}
+          <div className="space-y-2">
+            <label className="text-xs sm:text-sm font-bold text-teal-300 flex items-center gap-2">
+              <User size={16} /> Full name <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="John Smith"
+              className="w-full p-3.5 rounded-2xl border border-slate-700 bg-slate-950/60 text-white text-xs sm:text-sm focus:border-teal-400 outline-none"
+            />
+          </div>
+
+          {/* Phone Number Input */}
+          <div className="space-y-2">
+            <label className="text-xs sm:text-sm font-bold text-teal-300 flex items-center gap-2">
+              <Phone size={16} /> Phone number <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="04XX XXX XXX"
+              className="w-full p-3.5 rounded-2xl border border-slate-700 bg-slate-950/60 text-white text-xs sm:text-sm focus:border-teal-400 outline-none"
+            />
+          </div>
+
+          {/* Email Address Input */}
+          <div className="space-y-2">
+            <label className="text-xs sm:text-sm font-bold text-teal-300 flex items-center gap-2">
+              <Mail size={16} /> Email address <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full p-3.5 rounded-2xl border border-slate-700 bg-slate-950/60 text-white text-xs sm:text-sm focus:border-teal-400 outline-none"
+            />
+          </div>
+
+          {/* Preferred Contact Method */}
+          <div className="space-y-2 pt-1">
+            <label className="text-xs sm:text-sm font-bold text-teal-300">
+              Preferred contact method
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setContactMethod('Phone')}
+                className={`p-3.5 rounded-2xl border text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  contactMethod === 'Phone'
+                    ? 'bg-teal-500/20 border-teal-400 text-teal-200'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-400'
+                }`}
+              >
+                Phone
+              </button>
+              <button
+                type="button"
+                onClick={() => setContactMethod('Email')}
+                className={`p-3.5 rounded-2xl border text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  contactMethod === 'Email'
+                    ? 'bg-teal-500/20 border-teal-400 text-teal-200'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-400'
+                }`}
+              >
+                Email
+              </button>
+            </div>
+          </div>
+
+          <div className="pt-6 border-t border-slate-800 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => router.push(returnTo === 'review' ? '/booking/review' : '/booking/datetime')}
+              className="px-5 py-3 rounded-2xl border border-slate-700 text-slate-300 text-xs sm:text-sm font-semibold hover:bg-slate-800 transition-colors flex items-center gap-2 cursor-pointer"
+            >
+              <ArrowLeft size={16} /> Back
+            </button>
+
+            <button
+              type="submit"
+              disabled={!fullName || !phone || !email}
+              className="px-7 py-3 rounded-2xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs sm:text-sm font-bold shadow-lg shadow-teal-500/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              Confirm Booking <ArrowRight size={16} />
+            </button>
+          </div>
+        </form>
       </div>
-    </section>
+    </div>
   );
 }

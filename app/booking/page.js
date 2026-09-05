@@ -1,96 +1,71 @@
-"use client";
+'use client';
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Check, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { PageBackground } from "@/components/layout/PageBackground";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { BookingSteps } from "@/components/booking/BookingSteps";
-import { cn } from "@/lib/utils";
-import { SERVICES } from "@/lib/serviceQuestions";
 import { saveDraft } from "@/lib/bookingDraft";
+import { SERVICES_DATA } from "@/lib/serviceQuestions";
+import { ArrowRight } from 'lucide-react';
 
-export default function BookingPage() {
-  return (
-    <Suspense fallback={null}>
-      <BookingPageInner />
-    </Suspense>
-  );
-}
-
-function BookingPageInner() {
+export default function BookingServicePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    const fromUrl = searchParams.get("service");
-    if (fromUrl && SERVICES.some((s) => s.id === fromUrl)) setSelected(fromUrl);
-  }, [searchParams]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
-  function handleContinue() {
-    saveDraft({ service: selected, answers: {}, jobDetails: "" });
-    router.push("/booking/details");
-  }
+  const handleServiceSelect = (service) => {
+    saveDraft({
+      serviceId: service.id,
+      serviceName: service.name,
+    });
+    router.push('/booking/details');
+  };
 
   return (
-    <section className="relative overflow-hidden bg-brand-50/50">
-      <PageBackground />
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-teal-950 to-indigo-950 text-white py-10 px-4">
+      <div className="max-w-6xl mx-auto space-y-10">
+        <BookingSteps currentStep={1} />
 
-      <div className="mx-auto max-w-3xl px-6 py-16">
-        <BookingSteps current={1} />
-
-        <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3.5 py-1.5 text-xs font-semibold text-brand-700">
-            Book a Service
+        <div className="text-center space-y-3">
+          <span className="text-xs font-bold text-teal-300 uppercase tracking-widest px-3.5 py-1 bg-teal-900/60 rounded-full border border-teal-500/30">
+            Step 1: Choose Service
           </span>
-          <h1 className="mt-4 font-display text-3xl font-bold text-ink sm:text-4xl">
-            What do you need help with?
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
+            Our Services
           </h1>
-          <p className="mt-3 text-sm text-ink-muted">
-            Pick a service to get started - pricing shown up front.
+          <p className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto">
+            Select a service below to continue with your booking request.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          {SERVICES.map((s, i) => {
-            const isSelected = selected === s.id;
-            return (
-              <div key={s.id} className="animate-fade-up" style={{ animationDelay: `${i * 80}ms` }}>
-                <button
-                  type="button"
-                  onClick={() => setSelected(s.id)}
-                  className={cn(
-                    "group relative w-full overflow-hidden rounded-[--radius-lg] border-2 bg-surface text-left shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg",
-                    isSelected ? "border-brand-600 shadow-md" : "border-brand-100 hover:border-brand-300"
-                  )}
-                >
-                  {isSelected && (
-                    <span className="absolute right-3 top-3 z-10 flex size-5 items-center justify-center rounded-full bg-brand-600">
-                      <Check className="size-3 text-white" />
-                    </span>
-                  )}
-                  <img
-                    src={s.image}
-                    alt={s.label}
-                    className="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  <div className="p-4 text-center">
-                    <p className="font-display text-base font-semibold text-ink">{s.label}</p>
-                    <p className="text-xs text-ink-muted">{s.price}</p>
-                  </div>
-                </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {(SERVICES_DATA || []).map((service) => (
+            <div
+              key={service.id}
+              onClick={() => handleServiceSelect(service)}
+              className="group cursor-pointer bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-3 hover:border-teal-400/50 transition-all duration-300 shadow-xl flex flex-col items-center text-center hover:-translate-y-1.5"
+            >
+              <div className="relative w-full h-48 sm:h-52 rounded-2xl overflow-hidden bg-slate-950">
+                <img
+                  src={service.image}
+                  alt={service.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
               </div>
-            );
-          })}
-        </div>
 
-        <div className="mt-8 flex justify-center">
-          <Button size="lg" disabled={!selected} onClick={handleContinue}>
-            Continue <ArrowRight className="size-4" />
-          </Button>
+              <div className="py-4 px-2 space-y-1">
+                <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-teal-300 transition-colors">
+                  {service.name}
+                </h3>
+                <div className="text-xs text-teal-400 font-semibold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                  Select <ArrowRight size={12} />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

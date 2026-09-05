@@ -1,162 +1,170 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, CalendarDays, X } from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { PageBackground } from "@/components/layout/PageBackground";
+import { useState, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { BookingSteps } from "@/components/booking/BookingSteps";
-import { cn } from "@/lib/utils";
-import { SERVICES, TIME_SLOTS } from "@/lib/serviceQuestions";
-import { BOOKINGS } from "@/lib/mockData";
 import { getDraft, saveDraft } from "@/lib/bookingDraft";
-import { isValidCalendarDate } from "@/lib/validators";
+import { Calendar as CalendarIcon, ArrowRight, ArrowLeft } from 'lucide-react';
 
-export default function BookingDateTimePage() {
+const SLOTS_CONFIG = [
+  { time: '9:00 AM', isBooked: false },
+  { time: '10:00 AM', isBooked: false },
+  { time: '11:00 AM', isBooked: false },
+  { time: '12:00 PM', isBooked: true },
+  { time: '1:00 PM', isBooked: false },
+  { time: '2:00 PM', isBooked: false },
+  { time: '3:00 PM', isBooked: false },
+  { time: '4:00 PM', isBooked: false },
+  { time: '5:00 PM', isBooked: false },
+];
+
+export default function BookingDatetimePage() {
   const router = useRouter();
-  const [service, setService] = useState(null);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [slotError, setSlotError] = useState("");
-  const [error, setError] = useState("");
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
+
+  const dateInputRef = useRef(null);
+
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedSlot, setSelectedSlot] = useState('');
 
   useEffect(() => {
-    const draft = getDraft();
-    const found = SERVICES.find((s) => s.id === draft.service);
-    if (!found || !draft.state) {
-      router.replace("/booking");
-      return;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const currentDraft = getDraft();
+    if (currentDraft?.date) setSelectedDate(currentDraft.date);
+    if (currentDraft?.timeSlot) setSelectedSlot(currentDraft.timeSlot);
+  }, []);
+
+  const openDatePicker = () => {
+    if (dateInputRef.current) {
+      if ('showPicker' in HTMLInputElement.prototype) {
+        dateInputRef.current.showPicker();
+      } else {
+        dateInputRef.current.focus();
+      }
     }
-    setService(found);
-    setDate(draft.date || "");
-    setTime(draft.time || "");
-  }, [router]);
+  };
 
-  if (!service) return null;
+  const handleContinue = (e) => {
+    e.preventDefault();
+    if (!selectedDate || !selectedSlot) return;
 
-  const todayStr = new Date().toISOString().split("T")[0];
+    saveDraft({
+      date: selectedDate,
+      timeSlot: selectedSlot,
+    });
 
-  function isSlotTaken(slot) {
-    if (!date) return false;
-    return BOOKINGS.some((b) => b.service === service.label && b.date === date && b.time === slot);
-  }
-
-  const isDateFullyBooked = date && TIME_SLOTS.every((slot) => isSlotTaken(slot));
-
-  function handleSlotClick(slot) {
-    if (isSlotTaken(slot)) {
-      setSlotError(`${slot} is not available for ${service.label} on this date. Please pick another time.`);
-      return;
+    if (returnTo === 'review') {
+      router.push('/booking/review');
+    } else {
+      router.push('/booking/contact');
     }
-    setTime(slot);
-    setSlotError("");
-    setError("");
-  }
-
-  function handleDateChange(e) {
-    const value = e.target.value;
-    if (value && !isValidCalendarDate(value)) {
-      setError("That date doesn't exist - please pick a valid date.");
-      setDate("");
-      setTime("");
-      return;
-    }
-    setDate(value);
-    setTime("");
-    setSlotError("");
-    setError("");
-  }
-
-  function handleContinue() {
-    if (!date || !isValidCalendarDate(date) || !time) {
-      setError("Please choose a valid date and an available time slot.");
-      return;
-    }
-    saveDraft({ date, time });
-    router.push("/booking/contact");
-  }
+  };
 
   return (
-    <section className="relative overflow-hidden bg-brand-50/50">
-      <PageBackground />
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-teal-950 to-indigo-950 text-white py-10 px-4">
+      <div className="max-w-3xl mx-auto space-y-8">
+        <BookingSteps currentStep={4} />
 
-      <div className="mx-auto max-w-3xl px-6 py-16">
-        <BookingSteps current={4} />
-
-        <div className="animate-fade-up rounded-[--radius-lg] border-2 border-brand-100 bg-surface p-6 shadow-sm transition-colors hover:border-brand-200 sm:p-8">
-          <div className="flex items-center gap-2">
-            <CalendarDays className="size-4 text-brand-600" />
-            <h2 className="font-display text-lg font-semibold text-ink">Pick a date & time</h2>
-          </div>
-          <p className="mt-1 text-sm text-ink-muted">
-            We&apos;re available 9:00 AM - 5:00 PM. Availability is checked across all our staff.
+        <div className="text-center space-y-2">
+          <span className="text-xs font-bold text-teal-300 uppercase tracking-widest px-3 py-1 bg-teal-900/60 rounded-full border border-teal-500/30">
+            Step 4: Date & Time
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center justify-center gap-2">
+            <CalendarIcon className="text-teal-400" size={26} /> Pick a date & time
+          </h1>
+          <p className="text-sm text-slate-400">
+            We're available 9:00 AM - 5:00 PM. Availability is checked across all our staff.
           </p>
+        </div>
 
-          <div className="mt-6 flex flex-col gap-4">
-            <Input label="Preferred date" type="date" min={todayStr} value={date} onChange={handleDateChange} required />
-
-            <div>
-              <p className="text-sm font-medium text-ink">
-                Preferred time <span className="text-danger ml-0.5">*</span>
-              </p>
-              {!date ? (
-                <p className="mt-2 text-xs text-ink-faint">Choose a date first to see available times.</p>
-              ) : isDateFullyBooked ? (
-                <div className="mt-2 flex items-start gap-2 rounded-[--radius-sm] bg-danger/10 p-3 text-xs text-danger-strong">
-                  <X className="mt-0.5 size-3.5 shrink-0" />
-                  <span>
-                    We&apos;re fully booked for {service.label} on this date. Please choose a
-                    different date.
-                  </span>
-                </div>
-              ) : (
-                <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5">
-                  {TIME_SLOTS.map((slot) => {
-                    const taken = isSlotTaken(slot);
-                    return (
-                      <button
-                        key={slot}
-                        type="button"
-                        disabled={taken}
-                        onClick={() => handleSlotClick(slot)}
-                        title={taken ? "Already booked" : undefined}
-                        className={cn(
-                          "rounded-[--radius-sm] border px-2 py-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed",
-                          taken
-                            ? "border-border bg-canvas text-ink-faint line-through opacity-60"
-                            : time === slot
-                            ? "border-brand-600 bg-brand-600 text-white"
-                            : "border-border-strong bg-surface text-ink-muted hover:border-brand-300 hover:text-ink"
-                        )}
-                      >
-                        {slot}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+        <form onSubmit={handleContinue} className="bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl space-y-6">
+          
+          {/* Preferred Date Input */}
+          <div className="space-y-2">
+            <label className="text-xs sm:text-sm font-bold text-teal-300">
+              Preferred date <span className="text-rose-500">*</span>
+            </label>
+            <div className="relative flex items-center">
+              <input
+                ref={dateInputRef}
+                type="date"
+                required
+                value={selectedDate}
+                onChange={(e) => {
+                  setSelectedDate(e.target.value);
+                  setSelectedSlot('');
+                }}
+                className="w-full p-3.5 pr-14 rounded-2xl border border-slate-700 bg-slate-950/80 text-white text-xs sm:text-sm outline-none focus:border-teal-400 cursor-pointer"
+              />
+              
+              {/* Clickable Calendar Icon Button */}
+              <button
+                type="button"
+                onClick={openDatePicker}
+                className="absolute right-3 p-1.5 rounded-xl border-2 border-teal-400/80 bg-teal-950 text-teal-300 hover:bg-teal-900 hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-sm z-10"
+                title="Open Calendar"
+              >
+                <CalendarIcon size={18} className="stroke-[2.5]" />
+              </button>
             </div>
+          </div>
 
-            {slotError && (
-              <div className="flex items-start gap-2 rounded-[--radius-sm] bg-danger/10 p-3 text-xs text-danger-strong">
-                <X className="mt-0.5 size-3.5 shrink-0" />
-                <span>{slotError}</span>
+          {/* Preferred Time Section */}
+          <div className="space-y-3">
+            <label className="text-xs sm:text-sm font-bold text-teal-300">
+              Preferred time <span className="text-rose-500">*</span>
+            </label>
+
+            {!selectedDate ? (
+              <p className="text-xs text-slate-400 italic">
+                Choose a date first to see available times.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                {SLOTS_CONFIG.map((slot) => {
+                  const isSelected = selectedSlot === slot.time;
+                  return (
+                    <button
+                      key={slot.time}
+                      type="button"
+                      disabled={slot.isBooked}
+                      onClick={() => setSelectedSlot(slot.time)}
+                      className={`p-3 rounded-2xl border text-center text-xs font-semibold transition-all cursor-pointer relative ${
+                        slot.isBooked
+                          ? 'bg-slate-950/40 border-slate-800/80 text-slate-600 cursor-not-allowed line-through opacity-50'
+                          : isSelected
+                          ? 'bg-teal-500/20 border-teal-400 text-teal-200 font-bold shadow-md shadow-teal-500/10 scale-[1.02]'
+                          : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-600'
+                      }`}
+                    >
+                      {slot.time} {slot.isBooked && <span className="block text-[9px] no-underline font-normal text-rose-400/80">Booked</span>}
+                    </button>
+                  );
+                })}
               </div>
             )}
-            {error && <p className="text-xs text-danger-strong">{error}</p>}
           </div>
 
-          <div className="mt-6 flex items-center justify-between">
-            <Button variant="outline" onClick={() => router.push("/booking/location")}>
-              <ArrowLeft className="size-4" /> Back
-            </Button>
-            <Button onClick={handleContinue}>
-              Continue <ArrowRight className="size-4" />
-            </Button>
+          <div className="pt-6 border-t border-slate-800 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => router.push(returnTo === 'review' ? '/booking/review' : '/booking/location')}
+              className="px-5 py-3 rounded-2xl border border-slate-700 text-slate-300 text-xs sm:text-sm font-semibold hover:bg-slate-800 transition-colors flex items-center gap-2 cursor-pointer"
+            >
+              <ArrowLeft size={16} /> Back
+            </button>
+
+            <button
+              type="submit"
+              disabled={!selectedDate || !selectedSlot}
+              className="px-7 py-3 rounded-2xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs sm:text-sm font-bold shadow-lg shadow-teal-500/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              {returnTo === 'review' ? 'Save & Return to Review' : 'Continue'} <ArrowRight size={16} />
+            </button>
           </div>
-        </div>
+        </form>
       </div>
-    </section>
+    </div>
   );
 }

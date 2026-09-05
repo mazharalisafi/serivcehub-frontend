@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ShieldCheck, LogIn, Phone, Mail, MapPin } from 'lucide-react';
+import { ShieldCheck, LogIn, Phone, Mail, MapPin, Wrench } from 'lucide-react';
 import './globals.css';
 
 export default function RootLayout({ children }) {
@@ -52,81 +52,82 @@ export default function RootLayout({ children }) {
   };
 
   return (
-    <html lang="en">
-      <body suppressHydrationWarning={true} className="bg-slate-50 antialiased min-h-screen flex flex-col justify-between">
+    <html lang="en" className="dark scroll-smooth">
+      <body suppressHydrationWarning={true} className="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-teal-500 selection:text-slate-950">
         
         {/* NAVBAR */}
         {mounted && !isAdminPage && (
-          <div className="sticky top-0 z-50 w-full backdrop-blur-md bg-slate-50/80 py-3 transition-all border-b border-slate-200/50">
-            <div className="max-w-7xl mx-auto px-4">
-              <header className="bg-white/90 border border-slate-200/80 px-6 py-2.5 rounded-2xl shadow-sm flex items-center justify-between">
-                
-                {/* Logo */}
+          <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
+            <div className="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+              
+              {/* Logo */}
+              <Link
+                href="/"
+                onClick={handleHomeClick}
+                className="group flex items-center gap-2.5 transition-transform active:scale-95"
+              >
+                <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-tr from-teal-400 to-emerald-500 text-slate-950 shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform">
+                  <Wrench className="size-5 stroke-[2.5]" />
+                </div>
+                <span className="text-xl font-extrabold tracking-tight text-white">
+                  Service<span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">Hub</span>
+                </span>
+              </Link>
+
+              {/* Nav Links */}
+              <nav className="hidden md:flex items-center gap-1 rounded-full border border-slate-800 bg-slate-900/80 p-1.5 shadow-inner backdrop-blur-md">
                 <Link
                   href="/"
                   onClick={handleHomeClick}
-                  className="text-lg font-extrabold text-slate-900 bg-teal-50/80 hover:bg-teal-100/80 text-teal-800 px-4 py-1.5 rounded-xl flex items-center gap-2 border border-teal-200/60 transition-all hover:scale-105 active:scale-95"
+                  className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
+                    pathname === '/' 
+                      ? 'bg-teal-400 text-slate-950 shadow-md shadow-teal-400/20' 
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                  }`}
                 >
-                  <span className="w-2.5 h-2.5 rounded-full bg-teal-600 animate-pulse"></span>
-                  ServiceHub
+                  Home
                 </Link>
 
-                {/* Nav Links */}
-                <nav className="hidden md:flex items-center gap-1 bg-slate-100/70 p-1.5 rounded-2xl border border-slate-200/50">
-                  <Link
-                    href="/"
-                    onClick={handleHomeClick}
-                    className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                      pathname === '/' 
-                        ? 'bg-white text-slate-900 shadow-xs font-bold' 
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 hover:font-bold'
-                    }`}
-                  >
-                    Home
-                  </Link>
+                <button
+                  onClick={handleBookClick}
+                  className="px-5 py-2 rounded-full text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all duration-300 cursor-pointer"
+                >
+                  Book a Service
+                </button>
 
-                  {/* Book a Service Button */}
-                  <button
-                    onClick={handleBookClick}
-                    className="px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 hover:font-bold transition-all duration-200 cursor-pointer"
-                  >
-                    Book a Service
-                  </button>
+                <Link
+                  href="/about"
+                  className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
+                    pathname === '/about' 
+                      ? 'bg-teal-400 text-slate-950 shadow-md shadow-teal-400/20' 
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                  }`}
+                >
+                  About
+                </Link>
+              </nav>
 
-                  <Link
-                    href="/about"
-                    className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                      pathname === '/about' 
-                        ? 'bg-white text-slate-900 shadow-xs font-bold' 
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 hover:font-bold'
-                    }`}
-                  >
-                    About
-                  </Link>
-                </nav>
+              {/* Right Action Buttons */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleAdminLoginClick}
+                  className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900 px-4 py-2 text-xs font-semibold text-slate-300 hover:border-teal-500/40 hover:text-white transition-all cursor-pointer"
+                >
+                  <ShieldCheck size={14} className="text-teal-400" />
+                  Admin Login
+                </button>
 
-                {/* Right Action Buttons */}
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={handleAdminLoginClick}
-                    className="text-xs font-bold text-teal-800 bg-teal-50 border border-teal-200/80 hover:bg-teal-100/80 px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-2xs hover:shadow-xs hover:scale-105 active:scale-95 cursor-pointer"
-                  >
-                    <ShieldCheck size={14} className="text-teal-600" />
-                    Admin Login
-                  </button>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-teal-400 hover:bg-teal-300 text-slate-950 font-extrabold px-5 py-2 text-xs shadow-lg shadow-teal-500/20 hover:scale-[1.02] active:scale-95 transition-all"
+                >
+                  <LogIn size={14} />
+                  Sign In
+                </Link>
+              </div>
 
-                  {/* Active Sign In Button */}
-                  <Link
-                    href="/login"
-                    className="bg-[#00667e] hover:bg-[#005266] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-teal-900/10 flex items-center gap-1.5 transition-all hover:scale-105 hover:shadow-lg active:scale-95"
-                  >
-                    <LogIn size={14} />
-                    Sign In
-                  </Link>
-                </div>
-              </header>
             </div>
-          </div>
+          </header>
         )}
 
         {/* PAGE CONTENT */}
@@ -134,19 +135,27 @@ export default function RootLayout({ children }) {
 
         {/* FOOTER */}
         {mounted && !isAdminPage && (
-          <footer className="bg-slate-900 text-slate-300 mt-20 border-t border-slate-800">
-            <div className="max-w-7xl mx-auto px-6 py-12">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <footer className="relative border-t border-slate-800/80 bg-slate-950 text-slate-400 overflow-hidden mt-20">
+            
+            {/* Top Cyan Glow Accent */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-teal-500 to-transparent" />
+
+            <div className="max-w-7xl mx-auto px-6 pt-16 pb-12">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
                 
                 {/* Brand Info */}
                 <div className="space-y-4">
                   <Link
                     href="/"
                     onClick={handleHomeClick}
-                    className="text-xl font-extrabold text-white flex items-center gap-2 hover:scale-105 transition-transform duration-200 origin-left inline-block"
+                    className="flex items-center gap-2.5 group"
                   >
-                    <span className="w-3 h-3 rounded-full bg-teal-500 inline-block animate-pulse"></span>
-                    ServiceHub
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-teal-400 text-slate-950 font-bold">
+                      <Wrench className="size-4" />
+                    </div>
+                    <span className="text-xl font-extrabold text-white">
+                      Service<span className="text-teal-400">Hub</span>
+                    </span>
                   </Link>
                   <p className="text-xs text-slate-400 leading-relaxed">
                     Reliable, fast, and professional home services. Get it fixed, not stressed.
@@ -154,21 +163,21 @@ export default function RootLayout({ children }) {
                 </div>
 
                 {/* Quick Links */}
-                <div>
-                  <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-4">Quick Links</h4>
+                <div className="space-y-3">
+                  <h4 className="text-white text-xs font-bold uppercase tracking-wider">Quick Links</h4>
                   <ul className="space-y-2.5 text-xs">
                     <li>
-                      <Link href="/" onClick={handleHomeClick} className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
+                      <Link href="/" onClick={handleHomeClick} className="hover:text-teal-300 transition-colors">
                         Home
                       </Link>
                     </li>
                     <li>
-                      <button onClick={handleBookClick} className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 cursor-pointer inline-block text-left">
+                      <button onClick={handleBookClick} className="hover:text-teal-300 transition-colors cursor-pointer text-left">
                         Book a Service
                       </button>
                     </li>
                     <li>
-                      <Link href="/about" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
+                      <Link href="/about" className="hover:text-teal-300 transition-colors">
                         About Us
                       </Link>
                     </li>
@@ -176,16 +185,16 @@ export default function RootLayout({ children }) {
                 </div>
 
                 {/* Account Links */}
-                <div>
-                  <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-4">Account</h4>
+                <div className="space-y-3">
+                  <h4 className="text-white text-xs font-bold uppercase tracking-wider">Account</h4>
                   <ul className="space-y-2.5 text-xs">
                     <li>
-                      <Link href="/login" className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 inline-block">
+                      <Link href="/login" className="hover:text-teal-300 transition-colors">
                         Customer Sign In
                       </Link>
                     </li>
                     <li>
-                      <button onClick={handleAdminLoginClick} className="hover:text-teal-400 hover:font-bold hover:scale-105 transition-all duration-200 cursor-pointer inline-block text-left">
+                      <button onClick={handleAdminLoginClick} className="hover:text-teal-300 transition-colors cursor-pointer text-left">
                         Admin Login
                       </button>
                     </li>
@@ -193,19 +202,19 @@ export default function RootLayout({ children }) {
                 </div>
 
                 {/* Contact Info */}
-                <div>
-                  <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-4">Contact Us</h4>
-                  <ul className="space-y-3 text-xs">
-                    <li className="flex items-center gap-2 hover:text-teal-400 transition-colors cursor-pointer group">
-                      <Phone size={14} className="text-teal-500 group-hover:scale-125 transition-transform" />
+                <div className="space-y-3">
+                  <h4 className="text-white text-xs font-bold uppercase tracking-wider">Contact Us</h4>
+                  <ul className="space-y-2.5 text-xs">
+                    <li className="flex items-center gap-2 text-slate-300">
+                      <Phone size={14} className="text-teal-400 shrink-0" />
                       <span>+1 (555) 019-2834</span>
                     </li>
-                    <li className="flex items-center gap-2 hover:text-teal-400 transition-colors cursor-pointer group">
-                      <Mail size={14} className="text-teal-500 group-hover:scale-125 transition-transform" />
+                    <li className="flex items-center gap-2 text-slate-300">
+                      <Mail size={14} className="text-teal-400 shrink-0" />
                       <span>support@servicehub.com</span>
                     </li>
-                    <li className="flex items-center gap-2 hover:text-teal-400 transition-colors cursor-pointer group">
-                      <MapPin size={14} className="text-teal-500 group-hover:scale-125 transition-transform" />
+                    <li className="flex items-center gap-2 text-slate-300">
+                      <MapPin size={14} className="text-teal-400 shrink-0" />
                       <span>123 Service Street, Business Hub</span>
                     </li>
                   </ul>
@@ -214,11 +223,11 @@ export default function RootLayout({ children }) {
               </div>
 
               {/* Bottom Copyright */}
-              <div className="border-t border-slate-800 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+              <div className="border-t border-slate-900 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
                 <p>© {new Date().getFullYear()} ServiceHub. All rights reserved.</p>
-                <div className="flex gap-4">
-                  <Link href="/term" className="hover:text-teal-400 transition-colors">Privacy Policy</Link>
-                  <Link href="/term" className="hover:text-teal-400 transition-colors">Terms of Service</Link>
+                <div className="flex gap-6">
+                  <Link href="/term" className="hover:text-slate-400 transition-colors">Privacy Policy</Link>
+                  <Link href="/term" className="hover:text-slate-400 transition-colors">Terms of Service</Link>
                 </div>
               </div>
 

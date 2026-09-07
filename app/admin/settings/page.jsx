@@ -1,238 +1,278 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { User, Mail, Lock, Phone, Save, Bell, Shield, CheckCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  ShieldCheck, 
+  Lock, 
+  Bell, 
+  Save, 
+  KeyRound,
+  Check
+} from "lucide-react";
 
-export default function AdminSettingsPage() {
-  // Admin Info State
-  const [adminData, setAdminData] = useState({
-    name: 'Mazhar',
-    email: 'admin@servicehub.com',
-    phone: '+1 (555) 019-2834',
-    role: 'Super Admin',
+export default function SettingsPage() {
+  // Profile Form State
+  const [profile, setProfile] = useState({
+    fullName: "Mazhar",
+    email: "admin@servicehub.com",
+    phone: "+1 (555) 019-2834",
+    role: "Super Admin",
   });
 
-  // Password State
+  // Password Form State
   const [passwords, setPasswords] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
-  // Notification Preferences State
+  // Notifications State
   const [notifications, setNotifications] = useState({
     emailAlerts: true,
     bookingUpdates: true,
-    systemReports: false,
   });
 
-  const [savedMessage, setSavedMessage] = useState('');
-
-  // Handle Info Submit
+  // Handlers
   const handleProfileSubmit = (e) => {
     e.preventDefault();
-    setSavedMessage('Admin information updated successfully!');
-    setTimeout(() => setSavedMessage(''), 3000);
+    alert("Profile information updated successfully!");
   };
 
-  // Handle Password Submit
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
     if (passwords.newPassword !== passwords.confirmPassword) {
-      alert('New passwords do not match!');
+      alert("New passwords do not match!");
       return;
     }
-    setSavedMessage('Password changed successfully!');
-    setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    setTimeout(() => setSavedMessage(''), 3000);
+    alert("Password updated successfully!");
+    setPasswords({ currentPassword: "", newPassword: "", confirmPassword: "" });
   };
 
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="p-6 md:p-8 min-h-screen bg-[#030712] text-slate-100 space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-800">Admin Settings</h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <h1 className="text-2xl font-bold text-white tracking-tight">
+          Admin Settings
+        </h1>
+        <p className="text-xs text-slate-400 mt-1">
           Manage your account profile, credentials, and system notification preferences.
         </p>
       </div>
 
-      {/* Success Banner */}
-      {savedMessage && (
-        <div className="flex items-center gap-2 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl font-medium animate-fade-in">
-          <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-          {savedMessage}
-        </div>
-      )}
-
-      {/* Card 1: Admin Profile Information */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-        <div className="flex items-center gap-2 pb-4 mb-6 border-b border-slate-100">
-          <User className="w-5 h-5 text-teal-600" />
-          <div>
-            <h2 className="text-base font-bold text-slate-800">Admin Profile Information</h2>
-            <p className="text-xs text-slate-500">Update your personal details and contact email</p>
-          </div>
-        </div>
-
-        <form onSubmit={handleProfileSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-6 max-w-4xl">
+        {/* 1. ADMIN PROFILE INFORMATION */}
+        <div className="bg-[#0b0f19] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+          <div className="flex items-start gap-3 border-b border-slate-800/80 pb-4">
+            <div className="p-2 bg-teal-500/10 text-teal-400 rounded-xl">
+              <User size={20} />
+            </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Full Name</label>
-              <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  required
-                  value={adminData.name}
-                  onChange={(e) => setAdminData({ ...adminData, name: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2 border rounded-lg text-xs focus:outline-none focus:border-teal-500"
-                />
+              <h2 className="text-base font-bold text-white">Admin Profile Information</h2>
+              <p className="text-xs text-slate-400">Update your personal details and contact email</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleProfileSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Full Name */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                  <input
+                    type="text"
+                    value={profile.fullName}
+                    onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
+                    className="w-full pl-10 pr-4 py-2.5 bg-[#030712] border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 transition"
+                  />
+                </div>
+              </div>
+
+              {/* Email Address */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                  <input
+                    type="email"
+                    value={profile.email}
+                    onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                    className="w-full pl-10 pr-4 py-2.5 bg-[#030712] border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 transition"
+                  />
+                </div>
+              </div>
+
+              {/* Phone Number */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                  <input
+                    type="text"
+                    value={profile.phone}
+                    onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                    className="w-full pl-10 pr-4 py-2.5 bg-[#030712] border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 transition"
+                  />
+                </div>
+              </div>
+
+              {/* Role */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Role
+                </label>
+                <div className="relative">
+                  <ShieldCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                  <input
+                    type="text"
+                    disabled
+                    value={profile.role}
+                    className="w-full pl-10 pr-4 py-2.5 bg-[#030712]/50 border border-slate-800/80 rounded-xl text-xs text-slate-400 cursor-not-allowed"
+                  />
+                </div>
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Email Address</label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="email"
-                  required
-                  value={adminData.email}
-                  onChange={(e) => setAdminData({ ...adminData, email: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2 border rounded-lg text-xs focus:outline-none focus:border-teal-500"
-                />
-              </div>
+            <div className="flex justify-end pt-2">
+              <button
+                type="submit"
+                className="flex items-center gap-2 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition text-xs shadow-lg shadow-teal-500/20"
+              >
+                <Save size={15} /> Save Profile Changes
+              </button>
             </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Phone Number</label>
-              <div className="relative">
-                <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={adminData.phone}
-                  onChange={(e) => setAdminData({ ...adminData, phone: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2 border rounded-lg text-xs focus:outline-none focus:border-teal-500"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Role</label>
-              <div className="relative">
-                <Shield className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  disabled
-                  value={adminData.role}
-                  className="w-full pl-9 pr-3 py-2 border rounded-lg text-xs bg-slate-50 text-slate-500 cursor-not-allowed font-semibold"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-2 flex justify-end">
-            <button
-              type="submit"
-              className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
-            >
-              <Save className="w-4 h-4" />
-              Save Profile Changes
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* Card 2: Security & Password */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-        <div className="flex items-center gap-2 pb-4 mb-6 border-b border-slate-100">
-          <Lock className="w-5 h-5 text-teal-600" />
-          <div>
-            <h2 className="text-base font-bold text-slate-800">Change Password</h2>
-            <p className="text-xs text-slate-500">Ensure your account uses a strong, secure password</p>
-          </div>
+          </form>
         </div>
 
-        <form onSubmit={handlePasswordSubmit} className="space-y-4 max-w-md">
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">Current Password</label>
-            <input
-              type="password"
-              required
-              value={passwords.currentPassword}
-              onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-xs focus:outline-none focus:border-teal-500"
-            />
+        {/* 2. CHANGE PASSWORD */}
+        <div className="bg-[#0b0f19] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+          <div className="flex items-start gap-3 border-b border-slate-800/80 pb-4">
+            <div className="p-2 bg-teal-500/10 text-teal-400 rounded-xl">
+              <Lock size={20} />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-white">Change Password</h2>
+              <p className="text-xs text-slate-400">Ensure your account uses a strong, secure password</p>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">New Password</label>
-            <input
-              type="password"
-              required
-              value={passwords.newPassword}
-              onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-xs focus:outline-none focus:border-teal-500"
-            />
-          </div>
+          <form onSubmit={handlePasswordSubmit} className="space-y-4 max-w-md">
+            {/* Current Password */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                Current Password
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={passwords.currentPassword}
+                onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
+                className="w-full px-4 py-2.5 bg-[#030712] border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 transition"
+              />
+            </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">Confirm New Password</label>
-            <input
-              type="password"
-              required
-              value={passwords.confirmPassword}
-              onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-xs focus:outline-none focus:border-teal-500"
-            />
-          </div>
+            {/* New Password */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                New Password
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={passwords.newPassword}
+                onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
+                className="w-full px-4 py-2.5 bg-[#030712] border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 transition"
+              />
+            </div>
 
-          <button
-            type="submit"
-            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
-          >
-            <Lock className="w-4 h-4" />
-            Update Password
-          </button>
-        </form>
-      </div>
+            {/* Confirm New Password */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={passwords.confirmPassword}
+                onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+                className="w-full px-4 py-2.5 bg-[#030712] border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 transition"
+              />
+            </div>
 
-      {/* Card 3: Notification Preferences */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-        <div className="flex items-center gap-2 pb-4 mb-6 border-b border-slate-100">
-          <Bell className="w-5 h-5 text-teal-600" />
-          <div>
-            <h2 className="text-base font-bold text-slate-800">Notification Preferences</h2>
-            <p className="text-xs text-slate-500">Choose what system alerts you receive</p>
-          </div>
+            <div className="pt-2">
+              <button
+                type="submit"
+                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold px-5 py-2.5 rounded-xl transition text-xs border border-slate-700"
+              >
+                <KeyRound size={15} /> Update Password
+              </button>
+            </div>
+          </form>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-bold text-slate-800 block">Email Alerts</span>
-              <span className="text-[11px] text-slate-500">Receive system notifications via email</span>
+        {/* 3. NOTIFICATION PREFERENCES */}
+        <div className="bg-[#0b0f19] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+          <div className="flex items-start gap-3 border-b border-slate-800/80 pb-4">
+            <div className="p-2 bg-teal-500/10 text-teal-400 rounded-xl">
+              <Bell size={20} />
             </div>
-            <input
-              type="checkbox"
-              checked={notifications.emailAlerts}
-              onChange={(e) => setNotifications({ ...notifications, emailAlerts: e.target.checked })}
-              className="w-4 h-4 accent-teal-600 cursor-pointer"
-            />
+            <div>
+              <h2 className="text-base font-bold text-white">Notification Preferences</h2>
+              <p className="text-xs text-slate-400">Choose what system alerts you receive</p>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-bold text-slate-800 block">Booking Updates</span>
-              <span className="text-[11px] text-slate-500">Get notified when a new booking is created or modified</span>
+          <div className="space-y-4">
+            {/* Email Alerts Switch */}
+            <div className="flex items-center justify-between p-3 bg-[#030712] border border-slate-800/80 rounded-xl">
+              <div>
+                <div className="text-xs font-bold text-white">Email Alerts</div>
+                <div className="text-[11px] text-slate-400">Receive system notifications via email</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setNotifications({ ...notifications, emailAlerts: !notifications.emailAlerts })}
+                className={`w-6 h-6 rounded-md flex items-center justify-center border transition ${
+                  notifications.emailAlerts
+                    ? "bg-teal-500 border-teal-400 text-slate-950"
+                    : "bg-slate-900 border-slate-700 text-transparent"
+                }`}
+              >
+                <Check size={14} strokeWidth={3} />
+              </button>
             </div>
-            <input
-              type="checkbox"
-              checked={notifications.bookingUpdates}
-              onChange={(e) => setNotifications({ ...notifications, bookingUpdates: e.target.checked })}
-              className="w-4 h-4 accent-teal-600 cursor-pointer"
-            />
+
+            {/* Booking Updates Switch */}
+            <div className="flex items-center justify-between p-3 bg-[#030712] border border-slate-800/80 rounded-xl">
+              <div>
+                <div className="text-xs font-bold text-white">Booking Updates</div>
+                <div className="text-[11px] text-slate-400">Get notified when a new booking is created or modified</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setNotifications({ ...notifications, bookingUpdates: !notifications.bookingUpdates })}
+                className={`w-6 h-6 rounded-md flex items-center justify-center border transition ${
+                  notifications.bookingUpdates
+                    ? "bg-teal-500 border-teal-400 text-slate-950"
+                    : "bg-slate-900 border-slate-700 text-transparent"
+                }`}
+              >
+                <Check size={14} strokeWidth={3} />
+              </button>
+            </div>
           </div>
         </div>
       </div>

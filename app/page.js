@@ -82,15 +82,23 @@ export default function Home() {
               Plumbing, electrical, residential cleaning, decor & styling — book vetted local experts online in under 2 minutes.
             </p>
 
+            {/* BUTTONS SECTION FIX */}
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/booking">
-                <Button size="lg" className="bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold px-8 shadow-lg shadow-teal-500/25 transition-all duration-300 hover:scale-[1.02]">
-                  Book a Service <ArrowRight className="size-4 ml-1" />
-                </Button>
-              </Link>
-              <Link href="#services">
-                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 font-semibold px-6">
-                  Explore Services
+              {/* 1. Book a Service: Smooth scroll down to Services grid */}
+              <Button 
+                size="lg" 
+                onClick={() => {
+                  document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold px-8 shadow-lg shadow-teal-500/25 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+              >
+                Book a Service <ArrowRight className="size-4 ml-1" />
+              </Button>
+
+              {/* 2. Explore More: Navigates to About page */}
+              <Link href="/about">
+                <Button size="lg" variant="outline" className="border-white/30 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 font-semibold px-6 cursor-pointer">
+                  Explore More
                 </Button>
               </Link>
             </div>

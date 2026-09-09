@@ -4,33 +4,111 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BookingSteps } from "@/components/booking/BookingSteps";
 import { getDraft, saveDraft } from "@/lib/bookingDraft";
-import { ArrowRight, ArrowLeft, FileText } from 'lucide-react';
+import { ArrowRight, ArrowLeft, FileText, AlertCircle } from 'lucide-react';
+
+// SERVICE SPECIFIC DYNAMIC SUB-OPTIONS
+const SERVICE_OPTIONS = {
+  'house-cleaning': [
+    'Deep Cleaning',
+    'Regular Standard Cleaning',
+    'Move-in / Move-out Cleaning',
+    'Carpet & Upholstery Cleaning',
+    'Window Cleaning',
+    'Other'
+  ],
+  'plumbing': [
+    'Leakage / Pipe Repair',
+    'Blocked Drain',
+    'Installation (Taps/Sinks/Toilets)',
+    'Maintenance / Inspection',
+    'Water Heater Service',
+    'Other'
+  ],
+  'electrical': [
+    'Wiring / Rewiring',
+    'Lighting & Fixture Installation',
+    'Switch & Outlet Repair',
+    'Safety Switch / Circuit Breaker',
+    'Appliance Installation',
+    'Other'
+  ],
+  'decor': [
+    'Event & Party Decor',
+    'Interior Home Styling',
+    'Wall Art & Lighting Setup',
+    'Custom Furniture Setup',
+    'Theme Decoration',
+    'Other'
+  ],
+  'ndis-cleaning': [
+    'Regular NDIS Home Care Cleaning',
+    'Deep Sanitization',
+    'Specialized Accessibility Cleaning',
+    'Other'
+  ],
+  'dva-cleaning': [
+    'DVA Approved House Cleaning',
+    'Deep Sanitization',
+    'Other'
+  ],
+  'aged-care-cleaning': [
+    'Senior Home Sanitization',
+    'Routine Assistance Cleaning',
+    'Other'
+  ],
+  'insurance-cleaning': [
+    'Emergency Assessment Cleaning',
+    'Restoration Cleaning',
+    'Other'
+  ]
+};
 
 function DetailsFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get('returnTo');
+  const serviceQuery = searchParams.get('service');
 
-  const [serviceName, setServiceName] = useState('plumbing');
+  const [serviceId, setServiceId] = useState('plumbing');
+  const [serviceName, setServiceName] = useState('Plumbing');
   const [issueType, setIssueType] = useState('');
+  const [otherIssueText, setOtherIssueText] = useState('');
   const [urgency, setUrgency] = useState('');
   const [details, setDetails] = useState('');
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     const currentDraft = getDraft();
-    if (currentDraft?.serviceName) setServiceName(currentDraft.serviceName);
+
+    const activeId = serviceQuery || currentDraft?.serviceId || 'plumbing';
+    setServiceId(activeId);
+
+    const formattedName = currentDraft?.serviceName || activeId.replace('-', ' ').toUpperCase();
+    setServiceName(formattedName);
+
     if (currentDraft?.issueType) setIssueType(currentDraft.issueType);
+    if (currentDraft?.otherIssueText) setOtherIssueText(currentDraft.otherIssueText);
     if (currentDraft?.urgency) setUrgency(currentDraft.urgency);
     if (currentDraft?.details) setDetails(currentDraft.details);
-  }, []);
+  }, [searchParams, serviceQuery]);
+
+  const subOptions = SERVICE_OPTIONS[serviceId] || [
+    'Standard Repair / Service',
+    'Full Maintenance',
+    'New Installation',
+    'Other'
+  ];
 
   const handleNext = (e) => {
     e.preventDefault();
     if (!issueType || !urgency) return;
+    if (issueType === 'Other' && !otherIssueText.trim()) return;
 
     saveDraft({
+      serviceId,
+      serviceName,
       issueType,
+      otherIssueText: issueType === 'Other' ? otherIssueText : '',
       urgency,
       details
     });
@@ -44,6 +122,8 @@ function DetailsFormContent() {
 
   return (
     <form onSubmit={handleNext} className="bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl space-y-5">
+      
+      {/* Dynamic Sub-Options Dropdown based on Selected Service */}
       <div className="space-y-2">
         <label className="text-xs sm:text-sm font-bold text-teal-300">
           What type of {serviceName} issue is it? <span className="text-rose-500">*</span>
@@ -55,14 +135,30 @@ function DetailsFormContent() {
           className="w-full p-3.5 rounded-2xl border border-slate-700 bg-slate-950 text-white text-xs sm:text-sm focus:border-teal-400 outline-none"
         >
           <option value="" disabled>Select an option</option>
-          <option value="Leakage / Pipe Repair">Leakage / Pipe Repair</option>
-          <option value="Blocked Drain">Blocked Drain</option>
-          <option value="Installation">Installation</option>
-          <option value="Maintenance / Inspection">Maintenance / Inspection</option>
-          <option value="Other">Other</option>
+          {subOptions.map((option) => (
+            <option key={option} value={option}>{option}</option>
+          ))}
         </select>
       </div>
 
+      {/* Conditionally Rendered Input Field for "Other" Selection */}
+      {issueType === 'Other' && (
+        <div className="space-y-2 animate-fadeIn">
+          <label className="text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-1.5">
+            <AlertCircle size={15} /> Please specify your requirements: <span className="text-rose-500">*</span>
+          </label>
+          <input
+            type="text"
+            required
+            value={otherIssueText}
+            onChange={(e) => setOtherIssueText(e.target.value)}
+            placeholder="E.g. Need urgent setup for custom event backdrop and balloon arch..."
+            className="w-full p-3.5 rounded-2xl border border-amber-500/50 bg-slate-950 text-white text-xs sm:text-sm focus:border-amber-400 outline-none"
+          />
+        </div>
+      )}
+
+      {/* Urgency Selection */}
       <div className="space-y-2">
         <label className="text-xs sm:text-sm font-bold text-teal-300">
           How urgent is it? <span className="text-rose-500">*</span>
@@ -80,6 +176,7 @@ function DetailsFormContent() {
         </select>
       </div>
 
+      {/* Additional Optional Details */}
       <div className="space-y-2">
         <label className="text-xs sm:text-sm font-bold text-teal-300 flex items-center gap-1.5">
           <FileText size={16} /> Anything else we should know? (optional)
@@ -97,6 +194,7 @@ function DetailsFormContent() {
         </div>
       </div>
 
+      {/* Action Buttons */}
       <div className="pt-6 border-t border-slate-800 flex items-center justify-between">
         <button
           type="button"
@@ -108,7 +206,7 @@ function DetailsFormContent() {
 
         <button
           type="submit"
-          disabled={!issueType || !urgency}
+          disabled={!issueType || !urgency || (issueType === 'Other' && !otherIssueText.trim())}
           className="px-7 py-3 rounded-2xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs sm:text-sm font-bold shadow-lg shadow-teal-500/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
         >
           {returnTo === 'review' ? 'Save & Return to Review' : 'Continue'} <ArrowRight size={16} />

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { 
   Sparkles, 
   ShieldCheck, 
@@ -12,83 +13,18 @@ import {
   CalendarCheck2, 
   CheckCircle2,
   ChevronDown,
-  ChevronUp,
-  Wrench,
-  Zap,
-  Home as HomeIcon,
-  HeartHandshake,
-  Shield,
-  UserCheck,
-  FileText
+  ChevronUp
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Reveal } from "@/components/animation/Reveal";
+import { saveDraft } from "@/lib/bookingDraft";
+import { SERVICES_DATA } from "@/lib/servicesData";
 
 const HOW_IT_WORKS = [
   { icon: MousePointerClick, step: "01", title: "Choose a service", description: "Tell us what you need and answer a few quick questions about the job." },
   { icon: CalendarCheck2, step: "02", title: "Pick a time", description: "Choose a date and time that suits you - we check availability instantly." },
   { icon: CheckCircle2, step: "03", title: "We handle the rest", description: "A vetted professional shows up on time and gets the job done right." },
-];
-
-// ALL SERVICES DATA INCLUDING PLUMBING & ELECTRICAL
-const ALL_SERVICES = [
-  { 
-    id: "house-cleaning", 
-    title: "House Cleaning", 
-    category: "Cleaning",
-    description: "Professional residential cleaning tailored to your home requirements.", 
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80",
-    featured: true 
-  },
-  { 
-    id: "plumbing", 
-    title: "Plumbing Services", 
-    category: "Trades",
-    description: "Expert leak repairs, pipe fitting, drainage and emergency plumbing.", 
-    image: "https://images.unsplash.com/photo-1505798577917-a65157d3320a?auto=format&fit=crop&w=800&q=80",
-    featured: true 
-  },
-  { 
-    id: "electrical", 
-    title: "Electrical Works", 
-    category: "Trades",
-    description: "Licensed electricians for wiring, installations, lighting & safety tests.", 
-    image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80",
-    featured: true 
-  },
-  { 
-    id: "ndis-cleaning", 
-    title: "NDIS Cleaning", 
-    category: "Specialized",
-    description: "Approved NDIS registered cleaning support for home care.", 
-    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
-    featured: true 
-  },
-  { 
-    id: "dva-cleaning", 
-    title: "DVA Cleaning", 
-    category: "Specialized",
-    description: "Dedicated cleaning services for Department of Veterans Affairs clients.", 
-    image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=800&q=80",
-    featured: false 
-  },
-  { 
-    id: "aged-care-cleaning", 
-    title: "Aged Care Cleaning", 
-    category: "Specialized",
-    description: "Safe, compassionate and thorough sanitization for senior living.", 
-    image: "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=800&q=80",
-    featured: false 
-  },
-  { 
-    id: "insurance-cleaning", 
-    title: "Insurance Cleaning", 
-    category: "Specialized",
-    description: "Emergency restoration and insurance claim assessment cleaning.", 
-    image: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?auto=format&fit=crop&w=800&q=80",
-    featured: false 
-  },
 ];
 
 const TRUST_POINTS = [
@@ -98,16 +34,26 @@ const TRUST_POINTS = [
 ];
 
 export default function Home() {
+  const router = useRouter();
   const [showAllServices, setShowAllServices] = useState(false);
 
-  // Filter 4 featured services initially, or all if clicked
+  const ALL_SERVICES = SERVICES_DATA;
+
   const displayedServices = showAllServices 
     ? ALL_SERVICES 
     : ALL_SERVICES.filter(s => s.featured);
 
+  const handleBookNow = (service) => {
+    saveDraft({
+      serviceId: service.id,
+      serviceName: service.title || service.name,
+    });
+    router.push(`/booking/details?service=${service.id}`);
+  };
+
   return (
     <>
-      {/* HERO SECTION WITH NEW MODERN HD BACKGROUND */}
+      {/* HERO SECTION */}
       <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <img
@@ -115,7 +61,6 @@ export default function Home() {
             alt="Modern Clean Home Interior"
             className="h-full w-full object-cover object-center scale-105 transform transition-transform duration-1000"
           />
-          {/* Subtle Dark Gradient Overlay for Maximum Legibility */}
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/75 to-slate-950/50" />
         </div>
 
@@ -134,7 +79,7 @@ export default function Home() {
             </h1>
 
             <p className="mt-5 max-w-xl text-base sm:text-lg text-slate-200/90 font-normal leading-relaxed">
-              Plumbing, electrical, residential cleaning, and NDIS care — book vetted local experts online in under 2 minutes.
+              Plumbing, electrical, residential cleaning, decor & styling — book vetted local experts online in under 2 minutes.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -162,7 +107,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SERVICES SECTION WITH SEE ALL TOGGLE */}
+      {/* SERVICES SECTION */}
       <section id="services" className="relative border-y border-slate-800 bg-slate-950 py-24 px-6">
         <div className="mx-auto max-w-7xl">
           <Reveal as="div" className="mx-auto max-w-2xl text-center">
@@ -173,56 +118,57 @@ export default function Home() {
               Professional Services Offered
             </h2>
             <p className="mt-3 text-sm sm:text-base text-slate-400">
-              Select any category below to view detailed options and book instant availability.
+              Select any service below to view detailed options and book instant availability.
             </p>
           </Reveal>
 
-          {/* DYNAMIC GRID - 4 INITIAL / ALL ON EXPAND */}
           <div className="mt-12 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 transition-all duration-500">
-            {displayedServices.map(({ id, title, category, description, image }, i) => (
-              <Reveal key={id} delay={i * 80}>
+            {displayedServices.map((service, i) => (
+              <Reveal key={service.id} delay={i * 80}>
                 <Card className="group relative overflow-hidden bg-slate-900/90 border-slate-800 hover:border-teal-500/50 rounded-3xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-teal-950/50 flex flex-col h-full justify-between">
                   <div>
                     <div className="relative h-52 w-full overflow-hidden bg-slate-950">
                       <img 
-                        src={image} 
-                        alt={title} 
+                        src={service.image} 
+                        alt={service.title || service.name} 
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
                       />
-                      <span className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md text-teal-300 border border-teal-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                        {category}
-                      </span>
                     </div>
                     <CardContent className="p-5 flex flex-col gap-2">
-                      <h3 className="font-display text-lg font-bold text-white group-hover:text-teal-300 transition-colors">
-                        {title}
-                      </h3>
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-display text-lg font-bold text-white group-hover:text-teal-300 transition-colors">
+                          {service.title || service.name}
+                        </h3>
+                        <span className="text-[10px] font-semibold text-teal-400 bg-teal-950/80 border border-teal-500/30 px-2 py-0.5 rounded-md">
+                          {service.badgeText}
+                        </span>
+                      </div>
                       <p className="text-xs sm:text-sm text-slate-400 leading-relaxed line-clamp-2">
-                        {description}
+                        {service.description}
                       </p>
                     </CardContent>
                   </div>
 
                   <div className="p-5 pt-0">
-                    <Link 
-                      href={`/booking?service=${id}`} 
-                      className="mt-2 w-full inline-flex items-center justify-center gap-2 text-xs font-bold text-slate-950 bg-teal-400 hover:bg-teal-300 py-2.5 rounded-xl transition-all duration-200"
+                    <button
+                      type="button"
+                      onClick={() => handleBookNow(service)}
+                      className="mt-2 w-full inline-flex items-center justify-center gap-2 text-xs font-bold text-slate-950 bg-teal-400 hover:bg-teal-300 py-2.5 rounded-xl transition-all duration-200 cursor-pointer"
                     >
                       Book Now <ArrowRight className="size-3.5" />
-                    </Link>
+                    </button>
                   </div>
                 </Card>
               </Reveal>
             ))}
           </div>
 
-          {/* SEE ALL / SHOW LESS TOGGLE BUTTON */}
           <div className="mt-12 text-center">
             <Button
               onClick={() => setShowAllServices(!showAllServices)}
               variant="outline"
               size="lg"
-              className="border-teal-500/40 text-teal-300 hover:bg-teal-500/10 hover:text-teal-200 font-bold rounded-2xl px-8 transition-all"
+              className="border-teal-500/40 text-teal-300 hover:bg-teal-500/10 hover:text-teal-200 font-bold rounded-2xl px-8 transition-all cursor-pointer"
             >
               {showAllServices ? (
                 <>

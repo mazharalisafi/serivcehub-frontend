@@ -1,55 +1,67 @@
 'use client';
 
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { saveDraft } from '@/lib/bookingDraft';
-import { SERVICES_DATA } from '@/lib/servicesData';
+import Link from "next/link";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { SERVICES_DATA } from "@/lib/servicesData";
 
-export default function ServicesGrid() {
-  const router = useRouter();
-
-  const handleSelectService = (service) => {
-    saveDraft({
-      serviceId: service.id,
-      serviceName: service.name,
-    });
-    router.push('/booking/details');
-  };
-
+export default function ServiceGrid() {
   return (
-    <section className="py-12 px-4 max-w-7xl mx-auto">
-      <div className="text-center mb-10">
-        <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Our Cleaning & Maintenance Services
-        </h2>
-        <p className="text-slate-500 dark:text-slate-400 mt-2 text-xs sm:text-base">
-          Select a service below to book verified professionals instantly.
-        </p>
-      </div>
+    <section className="py-12 bg-slate-950 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-400 border border-teal-500/20">
+            <Sparkles className="size-3.5" />
+            Our Services
+          </span>
+          <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl">
+            Professional Cleaning Solutions
+          </h2>
+          <p className="mt-2 text-sm text-slate-400">
+            Choose a service below to start your booking instantly.
+          </p>
+        </div>
 
-      {/* Reference Image jaisa 5-Column Grid Layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {SERVICES_DATA.map((service) => (
-          <div
-            key={service.id}
-            onClick={() => handleSelectService(service)}
-            className="group cursor-pointer flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5"
-          >
-            <div className="relative w-full h-52 sm:h-60 rounded-2xl overflow-hidden shadow-sm group-hover:shadow-xl transition-all border border-slate-200 dark:border-slate-800 bg-slate-100">
-              <Image
-                src={service.image}
-                alt={service.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 20vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
+        {/* Grid Container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {SERVICES_DATA.map((service) => (
+            <div
+              key={service.id}
+              className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between hover:border-slate-700 transition-all group"
+            >
+              <div>
+                {/* Service Image */}
+                {service.image && (
+                  <div className="overflow-hidden rounded-2xl mb-4 h-44 w-full">
+                    <img
+                      src={service.image}
+                      alt={service.title || service.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                )}
+
+                {/* Service Info */}
+                <h3 className="text-lg font-bold text-white mb-2">
+                  {service.title || service.name}
+                </h3>
+                <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-6">
+                  {service.description}
+                </p>
+              </div>
+
+              {/* Action Button - Points to /booking?service=... */}
+              <Link
+                href={`/booking?service=${service.id}`}
+                className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-teal-400 hover:text-slate-950 text-teal-400 font-bold py-3 px-4 rounded-xl text-xs transition-all duration-200"
+              >
+                Book Now <ArrowRight className="size-4" />
+              </Link>
             </div>
+          ))}
+        </div>
 
-            <h3 className="mt-3 text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 group-hover:text-teal-400 transition-colors">
-              {service.name}
-            </h3>
-          </div>
-        ))}
       </div>
     </section>
   );

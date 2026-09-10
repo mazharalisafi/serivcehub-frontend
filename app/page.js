@@ -48,7 +48,7 @@ export default function Home() {
       serviceId: service.id,
       serviceName: service.title || service.name,
     });
-    router.push(`/booking/details?service=${service.id}`);
+    router.push(`/booking?service=${service.id}`);
   };
 
   return (

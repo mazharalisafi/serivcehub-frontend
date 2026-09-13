@@ -1,72 +1,61 @@
 'use client';
 
+import React from 'react';
 import { SERVICES_DATA } from '@/lib/servicesData';
-import { Card } from '@/components/ui/Card';
-import { Check } from 'lucide-react';
 
-export default function ServiceStep({ formData = {}, updateFormData, onNext }) {
-  // Safe navigation taake runtime error na aaye
-  const currentServiceId = formData?.serviceId || formData?.serviceSlug || '';
-
-  const selectedService = SERVICES_DATA?.find(
-    (s) => s.id === currentServiceId || s.slug === currentServiceId
-  ) || SERVICES_DATA?.[0];
-
-  const handleSelectService = (service) => {
-    if (updateFormData) {
-      updateFormData({ 
-        serviceId: service.id,
-        serviceCategory: service.title || service.name,
-        serviceSlug: service.slug 
-      });
-    }
+export default function ServiceStep({ formData, updateFormData, onNext, selectedService, setSelectedService }) {
+  
+  const handleSelect = (service) => {
+    setSelectedService(service);
+    updateFormData({
+      serviceCategory: service.title || service.name,
+      serviceSlug: service.slug,
+      serviceId: service.id,
+    });
   };
 
+  const isFormValid = formData.serviceCategory && formData.serviceCategory !== '';
+
   return (
-    <Card className="bg-[#0b1329]/90 border border-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl">
-      <h2 className="text-xl font-bold text-white mb-6">Select a Service</h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        {SERVICES_DATA?.map((service) => {
+    <div className="bg-[#0b1329]/70 border border-slate-700/50 p-6 sm:p-8 rounded-2xl shadow-2xl backdrop-blur-xl max-w-4xl mx-auto space-y-6">
+      <h2 className="text-xl font-bold text-white border-b border-slate-700 pb-3">Select a Service</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {SERVICES_DATA.map((service) => {
           const isSelected = selectedService?.id === service.id;
-
           return (
             <div
               key={service.id}
-              onClick={() => handleSelectService(service)}
-              className={`p-4 rounded-xl border cursor-pointer transition-all flex items-start justify-between ${
+              onClick={() => handleSelect(service)}
+              className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
                 isSelected
-                  ? 'border-teal-400 bg-teal-950/30 shadow-lg shadow-teal-500/10'
-                  : 'border-slate-800 bg-[#060b18] hover:border-slate-700'
+                  ? 'border-emerald-400 bg-emerald-400/10'
+                  : 'border-slate-700/50 bg-[#050b18]/80 hover:border-slate-500'
               }`}
             >
-              <div>
-                <h3 className="font-bold text-white text-base">{service.title || service.name}</h3>
-                <p className="text-slate-400 text-xs mt-1 line-clamp-2">{service.description}</p>
-                {service.price && (
-                  <p className="text-teal-400 font-bold text-sm mt-3">{service.price}</p>
-                )}
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-slate-100">{service.title || service.name}</h3>
+                <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${isSelected ? 'border-emerald-400 bg-emerald-400' : 'border-slate-600'}`}>
+                  {isSelected && <svg className="w-3 h-3 text-[#0b1329]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                </div>
               </div>
-              <div
-                className={`size-6 rounded-full border flex items-center justify-center shrink-0 ${
-                  isSelected ? 'border-teal-400 bg-teal-400 text-slate-950' : 'border-slate-700'
-                }`}
-              >
-                {isSelected && <Check className="size-4 stroke-[3]" />}
-              </div>
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                {service.shortDesc || `Professional ${service.title || service.name} tailored to your requirements.`}
+              </p>
             </div>
           );
         })}
       </div>
 
-      <div className="flex justify-end pt-2">
+      <div className="flex justify-end pt-4 border-t border-slate-700/50">
         <button
           onClick={onNext}
-          className="px-6 py-2.5 rounded-xl bg-teal-400 hover:bg-teal-300 text-slate-950 font-bold text-sm transition shadow-md"
+          disabled={!isFormValid}
+          className={`px-8 py-2.5 rounded-xl font-bold text-sm shadow-lg transition ${isFormValid ? 'bg-emerald-400 hover:bg-emerald-300 text-slate-950 cursor-pointer' : 'bg-slate-700 text-slate-400 opacity-50 cursor-not-allowed'}`}
         >
-          Continue
+          Continue &rarr;
         </button>
       </div>
-    </Card>
+    </div>
   );
 }

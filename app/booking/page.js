@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SERVICES_DATA } from '@/lib/servicesData';
 
 import { BookingSteps } from '@/components/booking/BookingSteps';
@@ -16,9 +17,11 @@ import ConfirmationStep from '@/components/booking/ConfirmationStep';
 function BookingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const [mounted, setMounted] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
+  const [direction, setDirection] = useState(1); // 1 = slide right, -1 = slide left
   const [selectedService, setSelectedService] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -26,8 +29,8 @@ function BookingContent() {
     serviceCategory: '',
     serviceSlug: '',
     serviceId: '',
-    issueType: 'Deep Cleaning',
-    urgency: 'Emergency (As soon as possible)',
+    issueType: '',
+    urgency: '',
     requirements: '',
     address: '',
     city: '',
@@ -42,10 +45,6 @@ function BookingContent() {
     notes: '',
   });
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const scrollToTop = () => {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -53,8 +52,7 @@ function BookingContent() {
   };
 
   useEffect(() => {
-    if (!mounted) return;
-
+    setMounted(true);
     const serviceQuery = searchParams.get('service');
 
     if (SERVICES_DATA && SERVICES_DATA.length > 0) {
@@ -69,15 +67,12 @@ function BookingContent() {
             serviceId: found.id,
           }));
           setCurrentStep(2);
-          return;
         }
       }
     }
-
-    if (!serviceQuery && currentStep === 1 && !selectedService && SERVICES_DATA?.[0]) {
-      setSelectedService(SERVICES_DATA[0]);
-    }
-  }, [searchParams, mounted]);
+    
+    setIsInitializing(false);
+  }, [searchParams]);
 
   const updateFormData = (newData) => {
     setFormData((prev) => ({ ...prev, ...newData }));
@@ -85,6 +80,7 @@ function BookingContent() {
 
   const nextStep = () => {
     scrollToTop();
+    setDirection(1);
     if (isEditing) {
       setIsEditing(false);
       setCurrentStep(6);
@@ -95,6 +91,7 @@ function BookingContent() {
 
   const prevStep = () => {
     scrollToTop();
+    setDirection(-1);
     if (isEditing) {
       setIsEditing(false);
       setCurrentStep(6);
@@ -105,118 +102,126 @@ function BookingContent() {
 
   const goToStep = (stepNumber) => {
     scrollToTop();
+    setDirection(stepNumber > currentStep ? 1 : -1);
     setIsEditing(true);
     setCurrentStep(stepNumber);
   };
 
   const handleReset = () => {
     scrollToTop();
-    setCurrentStep(1);
-    setSelectedService(null);
-    setIsEditing(false);
-    setFormData({
-      serviceCategory: '',
-      serviceSlug: '',
-      serviceId: '',
-      issueType: 'Deep Cleaning',
-      urgency: 'Emergency (As soon as possible)',
-      requirements: '',
-      address: '',
-      city: '',
-      state: '',
-      postcode: '',
-      date: '',
-      timeSlot: '',
-      fullName: '',
-      email: '',
-      phone: '',
-      preferredContact: 'Phone',
-      notes: '',
-    });
-    router.push('/booking');
+    router.push('/');
   };
 
-  if (!mounted) {
+  // Framer Motion Sliding Transition Variants
+  const slideVariants = {
+    initial: (dir) => ({
+      x: dir > 0 ? '60%' : '-60%',
+      opacity: 0,
+    }),
+    animate: {
+      x: 0,
+      opacity: 1,
+      transition: { duration: 0.3, ease: 'easeOut' },
+    },
+    exit: (dir) => ({
+      x: dir > 0 ? '-60%' : '60%',
+      opacity: 0,
+      transition: { duration: 0.25, ease: 'easeIn' },
+    }),
+  };
+
+  if (!mounted || isInitializing) {
     return (
-      <div className="min-h-screen bg-[#030712] text-emerald-400 pt-32 text-center text-sm font-medium">
-        Loading...
+      <div className="min-h-screen bg-[#030712] flex items-center justify-center text-emerald-400 text-sm font-medium">
+        Loading ServiceHub...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 pt-28 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        
+    <div className="min-h-screen relative z-0 flex flex-col pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+      {/* Background Overlays */}
+      <div className="absolute inset-0 z-[-2] bg-[url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat bg-fixed opacity-[0.15] mix-blend-screen"></div>
+      <div className="absolute inset-0 z-[-1] bg-gradient-to-b from-[#0b1329]/95 via-[#030712]/95 to-[#030712]"></div>
+
+      <div className="max-w-3xl mx-auto w-full">
         {currentStep <= 6 && (
           <BookingSteps currentStep={currentStep} />
         )}
 
-        <div className="mt-4">
-          {currentStep === 1 && (
-            <ServiceStep
-              formData={formData}
-              updateFormData={updateFormData}
-              onNext={nextStep}
-            />
-          )}
-
-          {currentStep === 2 && (
-            <ServiceDetailsStep
-              formData={formData}
-              updateFormData={updateFormData}
-              selectedService={selectedService}
-              onNext={nextStep}
-              onBack={prevStep}
-            />
-          )}
-
-          {currentStep === 3 && (
-            <LocationStep
-              formData={formData}
-              updateFormData={updateFormData}
-              onNext={nextStep}
-              onBack={prevStep}
-            />
-          )}
-
-          {currentStep === 4 && (
-            <DateTimeStep
-              formData={formData}
-              updateFormData={updateFormData}
-              onNext={nextStep}
-              onBack={prevStep}
-            />
-          )}
-
-          {currentStep === 5 && (
-            <ContactStep
-              formData={formData}
-              updateFormData={updateFormData}
-              onNext={nextStep}
-              onBack={prevStep}
-            />
-          )}
-
-          {currentStep === 6 && (
-            <ReviewStep
-              formData={formData}
-              selectedService={selectedService}
-              onConfirm={nextStep}
-              onBack={prevStep}
-              goToStep={goToStep}
-            />
-          )}
-
-          {currentStep === 7 && (
-            <ConfirmationStep
-              formData={formData}
-              selectedService={selectedService}
-              onReset={handleReset}
-            />
-          )}
+        {/* Sliding Step Content Container */}
+        <div className="relative overflow-hidden mt-4">
+          <AnimatePresence custom={direction} mode="wait">
+            <motion.div
+              key={currentStep}
+              custom={direction}
+              variants={slideVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="w-full"
+            >
+              {currentStep === 1 && (
+                <ServiceStep
+                  formData={formData}
+                  updateFormData={updateFormData}
+                  onNext={nextStep}
+                  selectedService={selectedService}
+                  setSelectedService={setSelectedService}
+                />
+              )}
+              {currentStep === 2 && (
+                <ServiceDetailsStep
+                  formData={formData}
+                  updateFormData={updateFormData}
+                  selectedService={selectedService}
+                  onNext={nextStep}
+                  onBack={prevStep}
+                />
+              )}
+              {currentStep === 3 && (
+                <LocationStep
+                  formData={formData}
+                  updateFormData={updateFormData}
+                  onNext={nextStep}
+                  onBack={prevStep}
+                />
+              )}
+              {currentStep === 4 && (
+                <DateTimeStep
+                  formData={formData}
+                  updateFormData={updateFormData}
+                  onNext={nextStep}
+                  onBack={prevStep}
+                />
+              )}
+              {currentStep === 5 && (
+                <ContactStep
+                  formData={formData}
+                  updateFormData={updateFormData}
+                  onNext={nextStep}
+                  onBack={prevStep}
+                />
+              )}
+              {currentStep === 6 && (
+                <ReviewStep
+                  formData={formData}
+                  selectedService={selectedService}
+                  onConfirm={nextStep}
+                  onBack={prevStep}
+                  goToStep={goToStep}
+                />
+              )}
+              {currentStep === 7 && (
+                <ConfirmationStep
+                  formData={formData}
+                  selectedService={selectedService}
+                  onReset={handleReset}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
-
       </div>
     </div>
   );
@@ -224,7 +229,7 @@ function BookingContent() {
 
 export default function BookingPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#030712] text-emerald-400 pt-32 text-center text-sm">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#030712] flex items-center justify-center text-emerald-400 text-sm">Loading...</div>}>
       <BookingContent />
     </Suspense>
   );

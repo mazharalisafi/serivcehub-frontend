@@ -95,47 +95,48 @@ export default function InvoicesPage() {
   };
 
   return (
-    <div className="p-8 min-h-screen bg-[#0b1329] text-slate-100">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4 sm:p-8 min-h-screen bg-[#0b1329] text-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Invoices Directory</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Invoices Directory</h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Manage and track customer billing, booking links, and downloads.
           </p>
         </div>
-        <button className="bg-teal-600 hover:bg-teal-500 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-lg">
+        <button className="self-start sm:self-auto bg-teal-600 hover:bg-teal-500 text-white font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-xs sm:text-sm transition shadow-lg">
           + Create Invoice
         </button>
       </div>
 
-      <div className="bg-[#111c38] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
-        <table className="w-full text-left border-collapse">
+      {/* Added overflow-x-auto & minimum table width to make table movable/scrollable on mobile */}
+      <div className="bg-[#111c38] rounded-2xl border border-slate-800 shadow-xl overflow-x-auto">
+        <table className="w-full text-left border-collapse min-w-[650px]">
           <thead>
             <tr className="bg-[#162345] border-b border-slate-800 text-slate-400 text-xs font-bold uppercase tracking-wider">
-              <th className="p-4">Invoice ID</th>
-              <th className="p-4">Booking ID</th>
-              <th className="p-4">Customer</th>
-              <th className="p-4">Service</th>
-              <th className="p-4">Date</th>
-              <th className="p-4">Amount</th>
-              <th className="p-4">Status</th>
-              <th className="p-4 text-center">Action</th>
+              <th className="p-4 whitespace-nowrap">Invoice ID</th>
+              <th className="p-4 whitespace-nowrap">Booking ID</th>
+              <th className="p-4 whitespace-nowrap">Customer</th>
+              <th className="p-4 whitespace-nowrap">Service</th>
+              <th className="p-4 whitespace-nowrap">Date</th>
+              <th className="p-4 whitespace-nowrap">Amount</th>
+              <th className="p-4 whitespace-nowrap">Status</th>
+              <th className="p-4 text-center whitespace-nowrap">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800/60 text-sm">
             {invoices.map((inv) => (
               <tr key={inv.id} className="hover:bg-slate-800/40 transition">
-                <td className="p-4 font-bold text-teal-400">{inv.id}</td>
-                <td className="p-4">
+                <td className="p-4 font-bold text-teal-400 whitespace-nowrap">{inv.id}</td>
+                <td className="p-4 whitespace-nowrap">
                   <span className="bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md text-xs font-semibold border border-slate-700">
                     {inv.bookingId}
                   </span>
                 </td>
-                <td className="p-4 font-medium text-white">{inv.customer}</td>
-                <td className="p-4 text-slate-300">{inv.service}</td>
-                <td className="p-4 text-slate-400">{inv.date}</td>
-                <td className="p-4 font-bold text-white">{inv.amount}</td>
-                <td className="p-4">
+                <td className="p-4 font-medium text-white whitespace-nowrap">{inv.customer}</td>
+                <td className="p-4 text-slate-300 whitespace-nowrap">{inv.service}</td>
+                <td className="p-4 text-slate-400 whitespace-nowrap">{inv.date}</td>
+                <td className="p-4 font-bold text-white whitespace-nowrap">{inv.amount}</td>
+                <td className="p-4 whitespace-nowrap">
                   <select
                     value={inv.status}
                     onChange={(e) => handleStatusChange(inv.id, e.target.value)}
@@ -146,7 +147,7 @@ export default function InvoicesPage() {
                     <option value="OVERDUE">OVERDUE</option>
                   </select>
                 </td>
-                <td className="p-4 text-center">
+                <td className="p-4 text-center whitespace-nowrap">
                   <button
                     onClick={() => handleDownloadPDF(inv)}
                     className="p-2 text-slate-400 hover:text-teal-400 hover:bg-slate-800 rounded-lg transition"

@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --canvas: #F6F7F9;
-  --surface: #FFFFFF;
-  --ink: #101828;
-  --ink-muted: #475467;
-  --ink-faint: #98A2B3;
-  --border: #E4E7EC;
-  --border-strong: #D0D5DD;
+  --canvas: #030712;
+  --surface: #0b1329;
+  --ink: #f8fafc;
+  --ink-muted: #94a3b8;
+  --ink-faint: #64748b;
+  --border: #1e293b;
+  --border-strong: #334155;
 
   --brand-50:  #EEF7F9;
   --brand-100: #D3ECF1;
@@ -76,16 +76,7 @@
 }
 
 body {
-  background-color: var(--canvas);
-  background-image:
-    radial-gradient(var(--brand-200) 1px, transparent 1px),
-    radial-gradient(circle at 12% 8%, rgba(120, 195, 210, 0.16), transparent 42%),
-    radial-gradient(circle at 88% 22%, rgba(246, 190, 95, 0.14), transparent 42%),
-    radial-gradient(circle at 20% 78%, rgba(120, 195, 210, 0.13), transparent 42%),
-    radial-gradient(circle at 92% 85%, rgba(246, 190, 95, 0.12), transparent 42%);
-  background-size: 22px 22px, auto, auto, auto, auto;
-  background-attachment: fixed;
-  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-color: #030712;
   color: var(--ink);
   font-family: var(--font-body);
 }

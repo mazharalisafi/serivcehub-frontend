@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Grid, 
@@ -13,7 +13,6 @@ import {
   CreditCard, 
   Settings, 
   LogOut, 
-  Search, 
   Bell, 
   Wrench,
   Menu,
@@ -34,7 +33,7 @@ const NAV_ITEMS = [
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifications, setNotifications] = useState([
@@ -43,14 +42,20 @@ export default function AdminLayout({ children }) {
     { id: 3, title: 'System Notice', desc: 'Weekly backup completed successfully', time: '5h ago', unread: false },
   ]);
 
-  const unreadCount = notifications.filter(n => n.unread).length;
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      alert(`Searching for: ${searchQuery}`);
+  // Session authentication check
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = sessionStorage.getItem('adminToken');
+      if (!token) {
+        // Use replace instead of push so dashboard isn't left in back history
+        router.replace('/admin-login');
+      } else {
+        setIsAuthenticated(true);
+      }
     }
-  };
+  }, [router, pathname]);
+
+  const unreadCount = notifications.filter(n => n.unread).length;
 
   const markAllAsRead = () => {
     setNotifications(notifications.map(n => ({ ...n, unread: false })));
@@ -58,11 +63,21 @@ export default function AdminLayout({ children }) {
 
   const handleDirectLogout = () => {
     if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('adminToken');
       localStorage.clear();
-      sessionStorage.clear();
     }
-    router.push('/');
+    // Redirects directly to home page on logout as requested
+    router.replace('/');
   };
+
+  // Render minimal loading state during auth check
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+        <p className="text-xs text-slate-400 animate-pulse">Checking credentials...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col lg:flex-row selection:bg-teal-500 selection:text-slate-950 font-sans">
@@ -75,13 +90,11 @@ export default function AdminLayout({ children }) {
         />
       )}
 
-      {/* Sidebar (Responsive Drawer) */}
+      {/* Sidebar Drawer */}
       <aside className={`w-64 bg-slate-900/95 border-r border-slate-800 flex flex-col justify-between p-4 fixed top-0 bottom-0 left-0 z-50 backdrop-blur-md transition-transform duration-300 ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         <div className="space-y-6">
-          
-          {/* Admin Brand Header & Mobile Close */}
           <div className="flex items-center justify-between">
             <Link 
               href="/admin/dashboard" 
@@ -106,7 +119,6 @@ export default function AdminLayout({ children }) {
             </button>
           </div>
 
-          {/* Navigation Items */}
           <nav className="space-y-1.5">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
@@ -130,7 +142,6 @@ export default function AdminLayout({ children }) {
           </nav>
         </div>
 
-        {/* Admin Footer & Logout */}
         <div className="pt-4 border-t border-slate-800/80 space-y-3">
           <Link 
             href="/admin/settings"
@@ -158,11 +169,7 @@ export default function AdminLayout({ children }) {
 
       {/* Main Area */}
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen w-full min-w-0">
-        
-        {/* Top Header Bar */}
         <header className="h-16 border-b border-slate-800 bg-slate-900/60 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 gap-4">
-          
-          {/* Mobile Sidebar Toggle Button */}
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
@@ -172,18 +179,8 @@ export default function AdminLayout({ children }) {
             <Menu size={20} />
           </button>
 
-          <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-xs sm:max-w-sm">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
-              className="w-full pl-10 pr-4 py-2 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-teal-400 transition-all"
-            />
-          </form>
+          <div className="flex-1" />
 
-          {/* Notifications Dropdown Container */}
           <div className="relative shrink-0">
             <button 
               type="button"
@@ -237,7 +234,6 @@ export default function AdminLayout({ children }) {
           </div>
         </header>
 
-        {/* Page Content Body */}
         <main className="p-4 sm:p-6 lg:p-8 flex-1 w-full overflow-x-hidden">
           {children}
         </main>

@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import { Search } from "lucide-react";
 
 export default function BookingsPage() {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [bookings, setBookings] = useState([
     {
@@ -64,19 +66,41 @@ export default function BookingsPage() {
     setIsModalOpen(false);
   };
 
+  const filteredBookings = bookings.filter((b) => {
+    const q = searchQuery.toLowerCase();
+    return (
+      b.id.toLowerCase().includes(q) ||
+      b.customer.toLowerCase().includes(q) ||
+      b.service.toLowerCase().includes(q) ||
+      b.email.toLowerCase().includes(q)
+    );
+  });
+
   return (
     <div className="p-4 sm:p-8 min-h-screen bg-[#0b1329] text-slate-100">
       {/* Page Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Bookings Directory</h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Manage customer appointments, update statuses, and view linked invoices.
           </p>
         </div>
+
+        {/* In-Page Table Search Filter */}
+        <div className="relative w-full md:w-72">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search bookings..."
+            className="w-full pl-10 pr-4 py-2 bg-[#111c38] border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-400 transition"
+          />
+        </div>
       </div>
 
-      {/* Bookings Table Wrapper with horizontal scrolling & min-width */}
+      {/* Bookings Table Wrapper */}
       <div className="bg-[#111c38] rounded-2xl border border-slate-800 shadow-xl overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[600px]">
           <thead>
@@ -90,34 +114,42 @@ export default function BookingsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800/60 text-sm">
-            {bookings.map((b) => (
-              <tr
-                key={b.id}
-                onClick={() => handleRowClick(b)}
-                className="hover:bg-slate-800/40 cursor-pointer transition duration-150"
-              >
-                <td className="p-4 font-bold text-teal-400 whitespace-nowrap">{b.id}</td>
-                <td className="p-4 font-medium text-white whitespace-nowrap">{b.customer}</td>
-                <td className="p-4 text-slate-300 whitespace-nowrap">{b.service}</td>
-                <td className="p-4 font-bold text-white whitespace-nowrap">{b.amount}</td>
-                <td className="p-4 whitespace-nowrap">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      b.paymentStatus === "Paid"
-                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                        : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                    }`}
-                  >
-                    {b.paymentStatus}
-                  </span>
-                </td>
-                <td className="p-4 whitespace-nowrap">
-                  <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 px-3 py-1 rounded-full text-xs font-bold">
-                    {b.status}
-                  </span>
+            {filteredBookings.length > 0 ? (
+              filteredBookings.map((b) => (
+                <tr
+                  key={b.id}
+                  onClick={() => handleRowClick(b)}
+                  className="hover:bg-slate-800/40 cursor-pointer transition duration-150"
+                >
+                  <td className="p-4 font-bold text-teal-400 whitespace-nowrap">{b.id}</td>
+                  <td className="p-4 font-medium text-white whitespace-nowrap">{b.customer}</td>
+                  <td className="p-4 text-slate-300 whitespace-nowrap">{b.service}</td>
+                  <td className="p-4 font-bold text-white whitespace-nowrap">{b.amount}</td>
+                  <td className="p-4 whitespace-nowrap">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold ${
+                        b.paymentStatus === "Paid"
+                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                          : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                      }`}
+                    >
+                      {b.paymentStatus}
+                    </span>
+                  </td>
+                  <td className="p-4 whitespace-nowrap">
+                    <span className="bg-teal-500/10 text-teal-300 border border-teal-500/20 px-3 py-1 rounded-full text-xs font-bold">
+                      {b.status}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={6} className="p-8 text-center text-xs text-slate-500">
+                  No bookings found matching "{searchQuery}".
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

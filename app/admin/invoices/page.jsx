@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { Search } from "lucide-react";
 
 export default function InvoicesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [invoices, setInvoices] = useState([
     {
       id: "INV-1024",
@@ -38,6 +40,16 @@ export default function InvoicesPage() {
       prev.map((inv) => (inv.id === id ? { ...inv, status: newStatus } : inv))
     );
   };
+
+  const filteredInvoices = invoices.filter((inv) => {
+    const q = searchQuery.toLowerCase();
+    return (
+      inv.id.toLowerCase().includes(q) ||
+      inv.bookingId.toLowerCase().includes(q) ||
+      inv.customer.toLowerCase().includes(q) ||
+      inv.service.toLowerCase().includes(q)
+    );
+  });
 
   const handleDownloadPDF = (invoice) => {
     const printWindow = window.open("", "_blank");
@@ -96,19 +108,33 @@ export default function InvoicesPage() {
 
   return (
     <div className="p-4 sm:p-8 min-h-screen bg-[#0b1329] text-slate-100">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Invoices Directory</h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Manage and track customer billing, booking links, and downloads.
           </p>
         </div>
-        <button className="self-start sm:self-auto bg-teal-600 hover:bg-teal-500 text-white font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-xs sm:text-sm transition shadow-lg">
-          + Create Invoice
-        </button>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          {/* In-Page Search Filter */}
+          <div className="relative w-full sm:w-64">
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search invoices..."
+              className="w-full pl-10 pr-4 py-2 bg-[#111c38] border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-400 transition"
+            />
+          </div>
+
+          <button className="bg-teal-600 hover:bg-teal-500 text-white font-semibold px-4 py-2 sm:px-5 sm:py-2 rounded-xl text-xs sm:text-sm transition shadow-lg shrink-0">
+            + Create Invoice
+          </button>
+        </div>
       </div>
 
-      {/* Added overflow-x-auto & minimum table width to make table movable/scrollable on mobile */}
       <div className="bg-[#111c38] rounded-2xl border border-slate-800 shadow-xl overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[650px]">
           <thead>
@@ -124,40 +150,48 @@ export default function InvoicesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800/60 text-sm">
-            {invoices.map((inv) => (
-              <tr key={inv.id} className="hover:bg-slate-800/40 transition">
-                <td className="p-4 font-bold text-teal-400 whitespace-nowrap">{inv.id}</td>
-                <td className="p-4 whitespace-nowrap">
-                  <span className="bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md text-xs font-semibold border border-slate-700">
-                    {inv.bookingId}
-                  </span>
-                </td>
-                <td className="p-4 font-medium text-white whitespace-nowrap">{inv.customer}</td>
-                <td className="p-4 text-slate-300 whitespace-nowrap">{inv.service}</td>
-                <td className="p-4 text-slate-400 whitespace-nowrap">{inv.date}</td>
-                <td className="p-4 font-bold text-white whitespace-nowrap">{inv.amount}</td>
-                <td className="p-4 whitespace-nowrap">
-                  <select
-                    value={inv.status}
-                    onChange={(e) => handleStatusChange(inv.id, e.target.value)}
-                    className="bg-[#0b1329] border border-slate-700 rounded-lg text-xs font-bold px-3 py-1.5 text-white cursor-pointer focus:outline-none focus:border-teal-500"
-                  >
-                    <option value="PAID">PAID</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="OVERDUE">OVERDUE</option>
-                  </select>
-                </td>
-                <td className="p-4 text-center whitespace-nowrap">
-                  <button
-                    onClick={() => handleDownloadPDF(inv)}
-                    className="p-2 text-slate-400 hover:text-teal-400 hover:bg-slate-800 rounded-lg transition"
-                    title="Download PDF"
-                  >
-                    📥
-                  </button>
+            {filteredInvoices.length > 0 ? (
+              filteredInvoices.map((inv) => (
+                <tr key={inv.id} className="hover:bg-slate-800/40 transition">
+                  <td className="p-4 font-bold text-teal-400 whitespace-nowrap">{inv.id}</td>
+                  <td className="p-4 whitespace-nowrap">
+                    <span className="bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md text-xs font-semibold border border-slate-700">
+                      {inv.bookingId}
+                    </span>
+                  </td>
+                  <td className="p-4 font-medium text-white whitespace-nowrap">{inv.customer}</td>
+                  <td className="p-4 text-slate-300 whitespace-nowrap">{inv.service}</td>
+                  <td className="p-4 text-slate-400 whitespace-nowrap">{inv.date}</td>
+                  <td className="p-4 font-bold text-white whitespace-nowrap">{inv.amount}</td>
+                  <td className="p-4 whitespace-nowrap">
+                    <select
+                      value={inv.status}
+                      onChange={(e) => handleStatusChange(inv.id, e.target.value)}
+                      className="bg-[#0b1329] border border-slate-700 rounded-lg text-xs font-bold px-3 py-1.5 text-white cursor-pointer focus:outline-none focus:border-teal-500"
+                    >
+                      <option value="PAID">PAID</option>
+                      <option value="PENDING">PENDING</option>
+                      <option value="OVERDUE">OVERDUE</option>
+                    </select>
+                  </td>
+                  <td className="p-4 text-center whitespace-nowrap">
+                    <button
+                      onClick={() => handleDownloadPDF(inv)}
+                      className="p-2 text-slate-400 hover:text-teal-400 hover:bg-slate-800 rounded-lg transition"
+                      title="Download PDF"
+                    >
+                      📥
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={8} className="p-8 text-center text-xs text-slate-500">
+                  No invoices found matching "{searchQuery}".
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

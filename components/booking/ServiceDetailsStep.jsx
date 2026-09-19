@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/Card';
 
 // Comprehensive options mapping for all services
 const SERVICE_ISSUE_OPTIONS = {
-  // 1. House Cleaning
   housecleaning: [
     'Standard Regular Cleaning',
     'Deep Home Cleaning',
@@ -13,8 +12,6 @@ const SERVICE_ISSUE_OPTIONS = {
     'Dusting & Vacuuming',
     'Other'
   ],
-
-  // 2. Plumbing Services
   plumbing: [
     'Leaking Pipe / Tap Repair',
     'Drain Unblocking / Clog Removal',
@@ -22,8 +19,6 @@ const SERVICE_ISSUE_OPTIONS = {
     'Water Heater Maintenance',
     'Other'
   ],
-
-  // 3. Electrical Services
   electrical: [
     'Switchboard & Breaker Repair',
     'Lighting & Power Socket Installation',
@@ -31,8 +26,6 @@ const SERVICE_ISSUE_OPTIONS = {
     'Appliance Connection',
     'Other'
   ],
-
-  // 4. Decor & Painting / Renovation
   decor: [
     'Interior Wall Painting',
     'Wallpaper Installation / Removal',
@@ -40,8 +33,6 @@ const SERVICE_ISSUE_OPTIONS = {
     'Decorative Feature Wall Setup',
     'Other'
   ],
-
-  // 5. Commercial & Office Cleaning
   commercial: [
     'Office Desk & Workspace Sanitization',
     'Commercial Carpet & Floor Cleaning',
@@ -50,8 +41,6 @@ const SERVICE_ISSUE_OPTIONS = {
     'Window Cleaning',
     'Other'
   ],
-
-  // 6. NDIS Approved Cleaning
   ndis: [
     'NDIS Home Maintenance & Cleaning',
     'Support Worker Assistance Cleaning',
@@ -60,8 +49,6 @@ const SERVICE_ISSUE_OPTIONS = {
     'Wheelchair Accessible Area Deep Cleaning',
     'Other'
   ],
-
-  // 7. DVA Specialized Cleaning
   dva: [
     'DVA Approved Domestic Cleaning',
     'Veterans Assistance Maintenance',
@@ -69,8 +56,6 @@ const SERVICE_ISSUE_OPTIONS = {
     'Heavy Duty Surface Sanitization',
     'Other'
   ],
-
-  // 8. Aged Care Home Support
   agedcare: [
     'Gentle Home Sanitization & Dusting',
     'Mobility Path & Floor Safety Cleaning',
@@ -78,8 +63,6 @@ const SERVICE_ISSUE_OPTIONS = {
     'Kitchen & Meal Prep Area Hygiene',
     'Other'
   ],
-
-  // 9. Insurance Assessment Cleaning
   insurance: [
     'Water & Flood Damage Restoration Cleaning',
     'Fire & Smoke Damage Cleaning',
@@ -87,8 +70,6 @@ const SERVICE_ISSUE_OPTIONS = {
     'Storm Damage Cleanup',
     'Other'
   ],
-
-  // 10. Deep Cleaning
   deepclean: [
     'Full House Deep Sanitization',
     'Grout & Tile Scrubbing',
@@ -96,8 +77,6 @@ const SERVICE_ISSUE_OPTIONS = {
     'Wall Wash & Paint Care',
     'Other'
   ],
-
-  // 11. Move In / End of Lease Cleaning
   moveinout: [
     'Full Bond Return Guarantee Cleaning',
     'Oven & Rangehood Deep Clean',
@@ -107,7 +86,6 @@ const SERVICE_ISSUE_OPTIONS = {
   ]
 };
 
-// Fallback options if a service slug is completely unknown
 const DEFAULT_OPTIONS = [
   'General Maintenance / Repair',
   'Urgent Inspection & Quote',
@@ -119,7 +97,6 @@ export default function ServiceDetailsStep({ formData, updateFormData, selectedS
   const serviceName = selectedService?.title || selectedService?.name || 'Service';
   const rawSlug = (selectedService?.slug || selectedService?.id || '').toLowerCase();
 
-  // Improved matching mechanism that correctly maps slugs
   const getOptionsKey = () => {
     if (rawSlug.includes('plumb')) return 'plumbing';
     if (rawSlug.includes('electr')) return 'electrical';
@@ -141,9 +118,7 @@ export default function ServiceDetailsStep({ formData, updateFormData, selectedS
   const [issueType, setIssueType] = useState(formData.issueType || '');
   const [urgency, setUrgency] = useState(formData.urgency || '');
   const [otherRequirements, setOtherRequirements] = useState(formData.requirements || '');
-  const [additionalNotes, setAdditionalNotes] = useState(formData.notes || '');
 
-  // Reset/sync selection state when switching between services
   useEffect(() => {
     if (formData.issueType && options.includes(formData.issueType)) {
       setIssueType(formData.issueType);
@@ -225,24 +200,6 @@ export default function ServiceDetailsStep({ formData, updateFormData, selectedS
           <option value="Within 24-48 hours">Within 24-48 hours</option>
           <option value="Flexible / Next few days">Flexible / Next few days</option>
         </select>
-      </div>
-
-      {/* Additional Information */}
-      <div>
-        <label className="block text-sm font-semibold text-emerald-400 mb-2 flex items-center gap-2">
-          <span>📄</span> Anything else we should know? <span className="text-slate-400 font-normal text-xs">(optional)</span>
-        </label>
-        <textarea
-          value={additionalNotes}
-          onChange={(e) => {
-            const val = e.target.value;
-            setAdditionalNotes(val);
-            updateFormData({ notes: val });
-          }}
-          rows={3}
-          placeholder="Example: Gate code, parking info, or specific instructions."
-          className="w-full bg-[#050b18]/80 border border-slate-600/50 rounded-xl p-3.5 text-slate-200 text-sm focus:outline-none focus:border-emerald-400 transition"
-        />
       </div>
 
       {/* Action Navigation */}

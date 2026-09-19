@@ -9,9 +9,6 @@ import {
   Clock, 
   Star, 
   ArrowRight, 
-  MousePointerClick, 
-  CalendarCheck2, 
-  CheckCircle2,
   ChevronDown,
   ChevronUp
 } from "lucide-react";
@@ -20,12 +17,6 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Reveal } from "@/components/animation/Reveal";
 import { saveDraft } from "@/lib/bookingDraft";
 import { SERVICES_DATA } from "@/lib/servicesData";
-
-const HOW_IT_WORKS = [
-  { icon: MousePointerClick, step: "01", title: "Choose a service", description: "Tell us what you need and answer a few quick questions about the job." },
-  { icon: CalendarCheck2, step: "02", title: "Pick a time", description: "Choose a date and time that suits you - we check availability instantly." },
-  { icon: CheckCircle2, step: "03", title: "We handle the rest", description: "A vetted professional shows up on time and gets the job done right." },
-];
 
 const TRUST_POINTS = [
   { icon: ShieldCheck, label: "Vetted, insured staff" },
@@ -82,9 +73,8 @@ export default function Home() {
               Plumbing, electrical, residential cleaning, decor & styling — book vetted local experts online in under 2 minutes.
             </p>
 
-            {/* BUTTONS SECTION FIX */}
+            {/* BUTTONS SECTION */}
             <div className="mt-8 flex flex-wrap gap-4">
-              {/* 1. Book a Service: Smooth scroll down to Services grid */}
               <Button 
                 size="lg" 
                 onClick={() => {
@@ -95,7 +85,6 @@ export default function Home() {
                 Book a Service <ArrowRight className="size-4 ml-1" />
               </Button>
 
-              {/* 2. Explore More: Navigates to About page */}
               <Link href="/about">
                 <Button size="lg" variant="outline" className="border-white/30 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 font-semibold px-6 cursor-pointer">
                   Explore More
@@ -190,31 +179,6 @@ export default function Home() {
             </Button>
           </div>
         </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="bg-slate-950 mx-auto max-w-7xl px-6 py-24">
-        <Reveal as="div" className="mx-auto max-w-xl text-center">
-          <span className="text-xs font-bold uppercase tracking-widest text-teal-400">Easy Process</span>
-          <h2 className="mt-2 font-display text-3xl font-extrabold text-white sm:text-4xl">
-            Booking a pro is this simple
-          </h2>
-        </Reveal>
-
-        <Reveal delay={100} className="relative mt-12 rounded-3xl border border-slate-800 bg-slate-900/60 p-8 sm:p-12 backdrop-blur-xl">
-          <div className="relative grid gap-10 sm:grid-cols-3 sm:gap-6">
-            {HOW_IT_WORKS.map(({ icon: Icon, step, title, description }) => (
-              <div key={step} className="relative flex flex-col items-center text-center">
-                <div className="relative z-10 flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-500 text-slate-950 shadow-lg shadow-teal-500/20">
-                  <Icon className="size-6 stroke-[2.5]" />
-                </div>
-                <span className="mt-4 font-display text-xs font-extrabold text-teal-400">STEP {step}</span>
-                <h3 className="mt-1 font-display text-lg font-bold text-white">{title}</h3>
-                <p className="mt-2 max-w-[240px] text-xs sm:text-sm text-slate-400">{description}</p>
-              </div>
-            ))}
-          </div>
-        </Reveal>
       </section>
     </>
   );

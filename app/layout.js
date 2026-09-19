@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
         return;
       }
     }
-    router.push('/booking');
+    router.push('/#services');
   };
 
   const handleAdminLoginClick = (e) => {
@@ -108,15 +108,10 @@ export default function RootLayout({ children }) {
                   </ul>
                 </div>
 
-                {/* Account Links */}
+                {/* Account Links (Customer Sign In REMOVED) */}
                 <div className="space-y-3">
                   <h4 className="text-white text-xs font-bold uppercase tracking-wider">Account</h4>
                   <ul className="space-y-2.5 text-xs">
-                    <li>
-                      <Link href="/login" className="hover:text-teal-300 transition-colors">
-                        Customer Sign In
-                      </Link>
-                    </li>
                     <li>
                       <button onClick={handleAdminLoginClick} className="hover:text-teal-300 transition-colors cursor-pointer text-left">
                         Admin Login

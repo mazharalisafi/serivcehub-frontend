@@ -15,7 +15,6 @@ const TIME_SLOTS = [
 ];
 
 export default function DateTimeStep({ formData, updateFormData, onNext, onBack }) {
-  // 1. Mock/Stored existing bookings (In production, replace with API/Database response)
   const existingBookings = [
     { date: '2026-09-24', time: '12:00 PM' },
     { date: '2026-09-25', time: '10:00 AM' },
@@ -25,7 +24,6 @@ export default function DateTimeStep({ formData, updateFormData, onNext, onBack 
   const [selectedDate, setSelectedDate] = useState(formData.date || '');
   const [selectedTime, setSelectedTime] = useState(formData.time || '');
 
-  // Reset selected time if it becomes unavailable on date change
   useEffect(() => {
     if (selectedDate && selectedTime) {
       const isStillAvailable = !isTimeSlotBooked(selectedDate, selectedTime);
@@ -36,7 +34,6 @@ export default function DateTimeStep({ formData, updateFormData, onNext, onBack 
     }
   }, [selectedDate]);
 
-  // Check if a specific time is booked on the CURRENTLY selected date
   const isTimeSlotBooked = (date, time) => {
     if (!date) return false;
     return existingBookings.some(
@@ -60,13 +57,6 @@ export default function DateTimeStep({ formData, updateFormData, onNext, onBack 
 
   return (
     <Card className="bg-[#0b1329]/70 border border-slate-700/50 p-6 sm:p-8 rounded-2xl shadow-2xl backdrop-blur-xl max-w-3xl mx-auto space-y-6">
-      <div className="text-center space-y-1">
-        <h2 className="text-2xl font-bold text-white">Pick a date & time</h2>
-        <p className="text-slate-400 text-xs sm:text-sm">
-          We're available 9:00 AM - 5:00 PM. Availability is checked across all our staff.
-        </p>
-      </div>
-
       {/* Date Picker Input */}
       <div>
         <label className="block text-xs font-semibold text-emerald-400 mb-2">
@@ -78,8 +68,7 @@ export default function DateTimeStep({ formData, updateFormData, onNext, onBack 
             value={selectedDate}
             onChange={handleDateChange}
             min={new Date().toISOString().split('T')[0]}
-            className="w-full bg-[#050b18]/80 border border-slate-600/50 rounded-xl p-3.5 text-slate-200 text-sm focus:outline-none focus:border-emerald-400 transition cursor-pointer
-                       [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-[0.8] [&::-webkit-calendar-picker-indicator]:opacity-100"
+            className="w-full bg-[#050b18]/80 border border-slate-600/50 rounded-xl p-3.5 text-slate-200 text-sm focus:outline-none focus:border-emerald-400 transition cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-[0.8] [&::-webkit-calendar-picker-indicator]:opacity-100"
           />
         </div>
       </div>

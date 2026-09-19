@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { ShieldCheck, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export default function AdminLoginPage() {
@@ -13,7 +12,6 @@ export default function AdminLoginPage() {
   const [keepSignedIn, setKeepSignedIn] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-  // Check if session exists before showing the form to prevent blinking
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = sessionStorage.getItem('adminToken');
@@ -33,7 +31,6 @@ export default function AdminLoginPage() {
     }
   };
 
-  // Prevent flash/blink of login inputs while checking session
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
@@ -44,7 +41,6 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-4 py-12 relative overflow-hidden selection:bg-teal-500 selection:text-slate-950">
-      {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-md bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl shadow-slate-950/90 relative z-10 space-y-6">
@@ -135,14 +131,6 @@ export default function AdminLoginPage() {
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </form>
-
-        {/* Footer Note */}
-        <p className="text-[11px] text-center text-slate-500 pt-2 border-t border-slate-800/60">
-          This area is for ServiceHub staff only. Customers should use the{' '}
-          <Link href="/login" className="text-teal-400 hover:underline font-semibold">
-            customer signin
-          </Link>.
-        </p>
 
       </div>
     </div>

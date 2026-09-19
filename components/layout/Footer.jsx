@@ -1,97 +1,81 @@
 'use client';
 
-import Link from "next/link";
-import { Phone, Mail, MapPin, Wrench, Shield, ArrowUpRight, Heart } from "lucide-react";
+import Link from 'next/link';
+import { Wrench, Phone, Mail, MapPin } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-slate-800 bg-slate-950 text-slate-400">
-      
-      {/* GLOW EFFECT */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-teal-500/50 to-transparent" />
-
-      <div className="mx-auto max-w-7xl px-6 pt-16 pb-12">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-4 lg:gap-12">
-          
-          {/* COLUMN 1: BRAND INFO */}
-          <div className="space-y-4 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-teal-500 text-slate-950 font-bold">
-                <Wrench className="size-4" />
-              </div>
-              <span className="font-display text-xl font-extrabold text-white">
-                Service<span className="text-teal-400">Hub</span>
-              </span>
-            </Link>
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-              Book vetted, licensed local professionals for plumbing, electrical, and house cleaning in under 2 minutes.
-            </p>
-            <div className="flex items-center gap-2 text-xs font-semibold text-teal-400 bg-teal-950/40 border border-teal-500/20 px-3 py-1.5 rounded-full w-fit">
-              <Shield className="size-3.5" /> 100% Insured & Verified
+    <footer className="bg-slate-950 border-t border-slate-800/80 text-slate-400 text-xs pt-12 pb-8 px-6">
+      <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        
+        {/* Brand Info */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400">
+              <Wrench className="size-4" />
             </div>
+            <span className="font-display text-base font-extrabold text-white">
+              Service<span className="text-teal-400">Hub</span>
+            </span>
           </div>
-
-          {/* COLUMN 2: QUICK LINKS */}
-          <div className="space-y-3">
-            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-white">Quick Links</h4>
-            <ul className="space-y-2 text-xs font-medium">
-              <li>
-                <Link href="/" className="hover:text-teal-300 transition-colors flex items-center gap-1 group">
-                  Home <ArrowUpRight className="size-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </Link>
-              </li>
-              <li>
-                <Link href="/booking" className="hover:text-teal-300 transition-colors flex items-center gap-1 group">
-                  Book a Service <ArrowUpRight className="size-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-teal-300 transition-colors flex items-center gap-1 group">
-                  About Us <ArrowUpRight className="size-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* COLUMN 3: SERVICES */}
-          <div className="space-y-3">
-            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-white">Top Services</h4>
-            <ul className="space-y-2 text-xs font-medium">
-              <li><Link href="/booking?service=house-cleaning" className="hover:text-teal-300 transition-colors">Residential Cleaning</Link></li>
-              <li><Link href="/booking?service=plumbing" className="hover:text-teal-300 transition-colors">Plumbing Repairs</Link></li>
-              <li><Link href="/booking?service=electrical" className="hover:text-teal-300 transition-colors">Electrical Works</Link></li>
-              <li><Link href="/booking?service=ndis-cleaning" className="hover:text-teal-300 transition-colors">NDIS Care Support</Link></li>
-            </ul>
-          </div>
-
-          {/* COLUMN 4: CONTACT INFO */}
-          <div className="space-y-3">
-            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-white">Get In Touch</h4>
-            <ul className="space-y-2.5 text-xs font-medium">
-              <li className="flex items-center gap-2.5 text-slate-300">
-                <Phone className="size-4 text-teal-400 shrink-0" />
-                <span>+1 (555) 019-2834</span>
-              </li>
-              <li className="flex items-center gap-2.5 text-slate-300">
-                <Mail className="size-4 text-teal-400 shrink-0" />
-                <span>support@servicehub.com</span>
-              </li>
-              <li className="flex items-start gap-2.5 text-slate-300">
-                <MapPin className="size-4 text-teal-400 shrink-0 mt-0.5" />
-                <span>123 Service Street, Business Hub</span>
-              </li>
-            </ul>
-          </div>
-
+          <p className="text-slate-400 leading-relaxed">
+            Reliable, fast, and professional home services. Get it fixed, not stressed.
+          </p>
         </div>
 
-        {/* BOTTOM COPYRIGHT BAR */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-900 pt-8 sm:flex-row text-xs text-slate-500">
-          <p>© 2026 ServiceHub Inc. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link href="#" className="hover:text-slate-400 transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-slate-400 transition-colors">Terms of Service</Link>
-          </div>
+        {/* Quick Links */}
+        <div>
+          <h4 className="text-slate-200 font-bold uppercase tracking-wider mb-3">Quick Links</h4>
+          <ul className="space-y-2">
+            <li>
+              <Link href="/" className="hover:text-teal-400 transition-colors">Home</Link>
+            </li>
+            <li>
+              <Link href="/#services" className="hover:text-teal-400 transition-colors">Book a Service</Link>
+            </li>
+            <li>
+              <Link href="/about" className="hover:text-teal-400 transition-colors">About Us</Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Account Section (Only Admin Login) */}
+        <div>
+          <h4 className="text-slate-200 font-bold uppercase tracking-wider mb-3">Account</h4>
+          <ul className="space-y-2">
+            <li>
+              <Link href="/admin-login" className="hover:text-teal-400 transition-colors">Admin Login</Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Contact Us */}
+        <div>
+          <h4 className="text-slate-200 font-bold uppercase tracking-wider mb-3">Contact Us</h4>
+          <ul className="space-y-2.5">
+            <li className="flex items-center gap-2">
+              <Phone className="size-3.5 text-teal-400" />
+              <span>+1 (555) 019-2834</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <Mail className="size-3.5 text-teal-400" />
+              <span>support@servicehub.com</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <MapPin className="size-3.5 text-teal-400" />
+              <span>123 Service Street, Business Hub</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="mx-auto max-w-7xl pt-6 border-t border-slate-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-slate-500">
+        <p>© {new Date().getFullYear()} ServiceHub. All rights reserved.</p>
+        <div className="flex gap-4">
+          <Link href="#" className="hover:text-slate-400 transition-colors">Privacy Policy</Link>
+          <Link href="#" className="hover:text-slate-400 transition-colors">Terms of Service</Link>
         </div>
       </div>
     </footer>

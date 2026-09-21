@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/Card';
+import React, { useRef } from 'react';
 
 const TIME_SLOTS = [
   '9:00 AM',
@@ -11,126 +10,125 @@ const TIME_SLOTS = [
   '1:00 PM',
   '2:00 PM',
   '3:00 PM',
-  '4:00 PM'
+  '4:00 PM',
 ];
 
 export default function DateTimeStep({ formData, updateFormData, onNext, onBack }) {
-  const existingBookings = [
-    { date: '2026-09-24', time: '12:00 PM' },
-    { date: '2026-09-25', time: '10:00 AM' },
-    { date: '2026-09-25', time: '2:00 PM' }
-  ];
-
-  const [selectedDate, setSelectedDate] = useState(formData.date || '');
-  const [selectedTime, setSelectedTime] = useState(formData.time || '');
-
-  useEffect(() => {
-    if (selectedDate && selectedTime) {
-      const isStillAvailable = !isTimeSlotBooked(selectedDate, selectedTime);
-      if (!isStillAvailable) {
-        setSelectedTime('');
-        updateFormData({ time: '' });
-      }
-    }
-  }, [selectedDate]);
-
-  const isTimeSlotBooked = (date, time) => {
-    if (!date) return false;
-    return existingBookings.some(
-      (b) => b.date === date && b.time.trim() === time.trim()
-    );
-  };
+  const dateInputRef = useRef(null);
 
   const handleDateChange = (e) => {
-    const newDate = e.target.value;
-    setSelectedDate(newDate);
-    updateFormData({ date: newDate });
+    updateFormData({ date: e.target.value });
   };
 
-  const handleTimeSelect = (time) => {
-    if (isTimeSlotBooked(selectedDate, time)) return;
-    setSelectedTime(time);
-    updateFormData({ time });
+  const handleTimeSelect = (slot) => {
+    updateFormData({ timeSlot: slot });
+    setTimeout(() => {
+      onNext();
+    }, 150);
   };
 
-  const isFormValid = selectedDate !== '' && selectedTime !== '';
+  const openDatePicker = () => {
+    if (dateInputRef.current) {
+      if (typeof dateInputRef.current.showPicker === 'function') {
+        dateInputRef.current.showPicker();
+      } else {
+        dateInputRef.current.focus();
+      }
+    }
+  };
 
   return (
-    <Card className="bg-[#0b1329]/70 border border-slate-700/50 p-6 sm:p-8 rounded-2xl shadow-2xl backdrop-blur-xl max-w-3xl mx-auto space-y-6">
-      {/* Date Picker Input */}
+    <div className="w-full space-y-6">
+      {/* Date Field */}
       <div>
-        <label className="block text-xs font-semibold text-emerald-400 mb-2">
-          Preferred date <span className="text-red-400">*</span>
+        <label className="block text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-2">
+          Preferred Date <span className="text-red-400">*</span>
         </label>
-        <div className="relative">
+        <div 
+          onClick={openDatePicker}
+          className="relative flex items-center justify-between bg-[#050b18]/90 border border-slate-700 rounded-xl px-4 py-3 cursor-pointer hover:border-emerald-400/60 transition group"
+        >
           <input
+            ref={dateInputRef}
             type="date"
-            value={selectedDate}
+            name="date"
+            value={formData.date || ''}
             onChange={handleDateChange}
-            min={new Date().toISOString().split('T')[0]}
-            className="w-full bg-[#050b18]/80 border border-slate-600/50 rounded-xl p-3.5 text-slate-200 text-sm focus:outline-none focus:border-emerald-400 transition cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-[0.8] [&::-webkit-calendar-picker-indicator]:opacity-100"
+            className="w-full bg-transparent text-slate-100 text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:left-0 [&::-webkit-calendar-picker-indicator]:top-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
           />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openDatePicker();
+            }}
+            className="text-emerald-400 group-hover:text-emerald-300 p-1 pointer-events-none"
+            aria-label="Select Date"
+          >
+            <svg
+              className="w-5 h-5 fill-current"
+              viewBox="0 0 24 24"
+            >
+              <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5z"/>
+            </svg>
+          </button>
         </div>
       </div>
 
-      {/* Time Slots Grid */}
-      <div>
-        <label className="block text-xs font-semibold text-emerald-400 mb-2">
-          Preferred time <span className="text-red-400">*</span>
-        </label>
-        
-        {!selectedDate ? (
-          <div className="p-4 rounded-xl border border-dashed border-slate-700 text-center text-slate-400 text-sm bg-[#050b18]/40">
-            📅 Please select a date above to view available time slots.
-          </div>
-        ) : (
+      {/* Time Slots - Appears after selecting Date */}
+      {formData.date ? (
+        <div className="space-y-3 transition-all duration-300 ease-in-out">
+          <label className="block text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+            Preferred Time <span className="text-red-400">*</span>
+          </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {TIME_SLOTS.map((time) => {
-              const booked = isTimeSlotBooked(selectedDate, time);
-              const isSelected = selectedTime === time;
-
+            {TIME_SLOTS.map((slot) => {
+              const isSelected = formData.timeSlot === slot;
               return (
                 <button
-                  key={time}
+                  key={slot}
                   type="button"
-                  disabled={booked}
-                  onClick={() => handleTimeSelect(time)}
-                  className={`p-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all duration-200 ${
-                    booked
-                      ? 'bg-slate-900/40 border-slate-800 text-slate-600 cursor-not-allowed line-through'
-                      : isSelected
-                      ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-lg shadow-emerald-500/10'
-                      : 'bg-[#050b18]/80 border-slate-700/60 text-slate-300 hover:border-emerald-400/50 hover:text-white'
+                  onClick={() => handleTimeSelect(slot)}
+                  className={`py-3 px-4 rounded-xl text-sm font-medium border transition-all ${
+                    isSelected
+                      ? 'bg-emerald-400 text-slate-950 border-emerald-400 font-bold shadow-lg shadow-emerald-500/20'
+                      : 'bg-[#050b18]/80 text-slate-300 border-slate-800 hover:border-slate-600 hover:bg-[#081226]'
                   }`}
                 >
-                  {time} {booked ? '(Booked)' : ''}
+                  {slot}
                 </button>
               );
             })}
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <p className="text-xs text-slate-400 italic">
+          Please select a date above to view available time slots.
+        </p>
+      )}
 
-      {/* Navigation Action Buttons */}
-      <div className="flex justify-between items-center pt-4 border-t border-slate-700/50">
+      {/* Navigation Footer */}
+      <div className="flex justify-between items-center pt-6 border-t border-slate-800">
         <button
           onClick={onBack}
-          className="px-6 py-2.5 rounded-xl border border-slate-600 text-slate-300 text-sm font-medium hover:bg-slate-800 transition"
+          type="button"
+          className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-sm font-medium hover:bg-slate-800 transition"
         >
           &larr; Back
         </button>
         <button
           onClick={onNext}
-          disabled={!isFormValid}
+          type="button"
+          disabled={!formData.date || !formData.timeSlot}
           className={`px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg transition ${
-            isFormValid
+            formData.date && formData.timeSlot
               ? 'bg-emerald-400 hover:bg-emerald-300 text-slate-950 cursor-pointer'
-              : 'bg-slate-700 text-slate-400 opacity-50 cursor-not-allowed'
+              : 'bg-slate-800 text-slate-500 opacity-50 cursor-not-allowed'
           }`}
         >
           Continue &rarr;
         </button>
       </div>
-    </Card>
+    </div>
   );
 }

@@ -1,9 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/Card';
 
-// Comprehensive options mapping for all services
 const SERVICE_ISSUE_OPTIONS = {
   housecleaning: [
     'Standard Regular Cleaning',
@@ -122,21 +120,32 @@ export default function ServiceDetailsStep({ formData, updateFormData, selectedS
   useEffect(() => {
     if (formData.issueType && options.includes(formData.issueType)) {
       setIssueType(formData.issueType);
-    } else {
-      setIssueType('');
+    }
+    if (formData.urgency) {
+      setUrgency(formData.urgency);
     }
   }, [selectedService]);
+
+  const checkAndAutoNext = (newIssue, newUrgency) => {
+    if (newIssue && newUrgency && newIssue !== 'Other') {
+      setTimeout(() => {
+        onNext();
+      }, 250);
+    }
+  };
 
   const handleIssueChange = (e) => {
     const val = e.target.value;
     setIssueType(val);
     updateFormData({ issueType: val });
+    checkAndAutoNext(val, urgency);
   };
 
   const handleUrgencyChange = (e) => {
     const val = e.target.value;
     setUrgency(val);
     updateFormData({ urgency: val });
+    checkAndAutoNext(issueType, val);
   };
 
   const isFormValid =
@@ -145,8 +154,7 @@ export default function ServiceDetailsStep({ formData, updateFormData, selectedS
     (issueType !== 'Other' || otherRequirements.trim().length > 0);
 
   return (
-    <Card className="bg-[#0b1329]/70 border border-slate-700/50 p-6 sm:p-8 rounded-2xl shadow-2xl backdrop-blur-xl max-w-3xl mx-auto space-y-6">
-      {/* Dynamic Requirement Selection */}
+    <div className="w-full space-y-6">
       <div>
         <label className="block text-sm font-semibold text-emerald-400 mb-2">
           What type of {serviceName} requirement do you have? <span className="text-red-400">*</span>
@@ -154,7 +162,7 @@ export default function ServiceDetailsStep({ formData, updateFormData, selectedS
         <select
           value={issueType}
           onChange={handleIssueChange}
-          className="w-full bg-[#050b18]/80 border border-slate-600/50 rounded-xl p-3.5 text-slate-200 text-sm focus:outline-none focus:border-emerald-400 transition"
+          className="w-full bg-[#050b18]/90 border border-slate-700 rounded-xl p-3.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-400 transition"
         >
           <option value="" disabled>Select an option</option>
           {options.map((opt) => (
@@ -165,7 +173,6 @@ export default function ServiceDetailsStep({ formData, updateFormData, selectedS
         </select>
       </div>
 
-      {/* Conditional Custom Requirement Input */}
       {issueType === 'Other' && (
         <div className="bg-amber-950/20 border border-amber-500/30 p-4 rounded-xl space-y-2">
           <label className="block text-xs font-bold text-amber-400 uppercase tracking-wider">
@@ -180,12 +187,11 @@ export default function ServiceDetailsStep({ formData, updateFormData, selectedS
             }}
             rows={3}
             placeholder={`Describe your specific ${serviceName} requirements...`}
-            className="w-full bg-[#050b18]/80 border border-amber-500/40 rounded-xl p-3.5 text-slate-200 text-sm focus:outline-none focus:border-amber-400 transition"
+            className="w-full bg-[#050b18]/90 border border-amber-500/40 rounded-xl p-3 text-slate-100 text-sm focus:outline-none focus:border-amber-400 transition"
           />
         </div>
       )}
 
-      {/* Urgency Selection */}
       <div>
         <label className="block text-sm font-semibold text-emerald-400 mb-2">
           How urgent is it? <span className="text-red-400">*</span>
@@ -193,7 +199,7 @@ export default function ServiceDetailsStep({ formData, updateFormData, selectedS
         <select
           value={urgency}
           onChange={handleUrgencyChange}
-          className="w-full bg-[#050b18]/80 border border-slate-600/50 rounded-xl p-3.5 text-slate-200 text-sm focus:outline-none focus:border-emerald-400 transition"
+          className="w-full bg-[#050b18]/90 border border-slate-700 rounded-xl p-3.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-400 transition"
         >
           <option value="" disabled>Select an option</option>
           <option value="Emergency (As soon as possible)">Emergency (As soon as possible)</option>
@@ -202,26 +208,27 @@ export default function ServiceDetailsStep({ formData, updateFormData, selectedS
         </select>
       </div>
 
-      {/* Action Navigation */}
-      <div className="flex justify-between items-center pt-4 border-t border-slate-700/50">
+      <div className="flex justify-between items-center pt-5 border-t border-slate-800">
         <button
           onClick={onBack}
-          className="px-6 py-2.5 rounded-xl border border-slate-600 text-slate-300 text-sm font-medium hover:bg-slate-800 transition"
+          type="button"
+          className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-sm font-medium hover:bg-slate-800 transition"
         >
           &larr; Back
         </button>
         <button
           onClick={onNext}
+          type="button"
           disabled={!isFormValid}
           className={`px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg transition ${
             isFormValid
               ? 'bg-emerald-400 hover:bg-emerald-300 text-slate-950 cursor-pointer'
-              : 'bg-slate-700 text-slate-400 opacity-50 cursor-not-allowed'
+              : 'bg-slate-800 text-slate-500 opacity-50 cursor-not-allowed'
           }`}
         >
           Continue &rarr;
         </button>
       </div>
-    </Card>
+    </div>
   );
 }

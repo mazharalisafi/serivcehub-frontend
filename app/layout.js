@@ -17,6 +17,7 @@ export default function RootLayout({ children }) {
   }, []);
 
   const isAdminPage = pathname?.startsWith('/admin');
+  const isBookingPage = pathname?.startsWith('/booking');
 
   const handleHomeClick = (e) => {
     if (pathname === '/') {
@@ -51,16 +52,18 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" className="dark scroll-smooth">
-      <body suppressHydrationWarning={true} className="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-teal-500 selection:text-slate-950">
+      <body suppressHydrationWarning={true} className={`bg-slate-950 text-slate-100 antialiased flex flex-col justify-between selection:bg-teal-500 selection:text-slate-950 ${isBookingPage ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
         
         {/* NAVBAR */}
         {mounted && !isAdminPage && <Navbar />}
 
         {/* PAGE CONTENT */}
-        <main className="flex-1">{children}</main>
+        <main className={`flex-1 ${isBookingPage ? 'h-[calc(100vh-80px)] overflow-hidden flex flex-col' : ''}`}>
+          {children}
+        </main>
 
-        {/* FOOTER */}
-        {mounted && !isAdminPage && (
+        {/* FOOTER - Hidden on Admin & Booking Pages */}
+        {mounted && !isAdminPage && !isBookingPage && (
           <footer className="relative border-t border-slate-800/80 bg-slate-950 text-slate-400 overflow-hidden mt-20">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-teal-500 to-transparent" />
 
@@ -108,7 +111,7 @@ export default function RootLayout({ children }) {
                   </ul>
                 </div>
 
-                {/* Account Links (Customer Sign In REMOVED) */}
+                {/* Account Links */}
                 <div className="space-y-3">
                   <h4 className="text-white text-xs font-bold uppercase tracking-wider">Account</h4>
                   <ul className="space-y-2.5 text-xs">
